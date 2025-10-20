@@ -1,7 +1,7 @@
 {
   "name": "ts-error-handling",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A fully typed error handling library for TypeScript inspired by Rust's Result type.",
   "author": "Chris Breuer <chris@stacksjs.org>",
   "license": "MIT",
@@ -37,7 +37,10 @@
   },
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["README.md", "dist"],
+  "files": [
+    "README.md",
+    "dist"
+  ],
   "scripts": {
     "build": "bun --bun build.ts",
     "fresh": "bunx rimraf node_modules/ bun.lock && bun i",
