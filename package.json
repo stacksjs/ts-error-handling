@@ -2,7 +2,7 @@
   "name": "ts-error-handling",
   "type": "module",
   "version": "0.0.0",
-  "description": "Error handling in TypeScript",
+  "description": "A fully typed error handling library for TypeScript inspired by Rust's Result type and neverthrow",
   "author": "Chris Breuer <chris@stacksjs.org>",
   "license": "MIT",
   "homepage": "https://github.com/stacksjs/ts-error-handling#readme",
@@ -13,7 +13,19 @@
   "bugs": {
     "url": "https://github.com/stacksjs/ts-error-handling/issues"
   },
-  "keywords": ["typescript", "error-handling", "kit", "bun", "package"],
+  "keywords": [
+    "typescript",
+    "error-handling",
+    "result",
+    "rust",
+    "neverthrow",
+    "functional",
+    "railway-oriented-programming",
+    "monads",
+    "type-safe",
+    "async",
+    "exceptions"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

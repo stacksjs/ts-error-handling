@@ -23,7 +23,14 @@ A fully typed error handling library for TypeScript, inspired by Rust's `Result`
 ## Installation
 
 ```bash
+# bun
 bun add ts-error-handling
+
+# npm
+npm install ts-error-handling
+
+# pnpm
+pnpm add ts-error-handling
 ```
 
 ## Quick Start
@@ -121,6 +128,160 @@ ok(42).expect('should work') // 42
 err('failed').expect('should work') // throws with custom message
 ```
 
+## Utility Functions
+
+### Exception Handling
+
+```typescript
+import { fromPromise, tryCatch, tryCatchAsync } from 'ts-error-handling'
+
+// Synchronous exception handling
+const result = tryCatch(
+  () => JSON.parse(jsonString),
+  error => `Parse error: ${error}`
+)
+
+// Async exception handling
+const asyncResult = await tryCatchAsync(
+  async () => await fetch('/api/data'),
+  error => new ApiError(error)
+)
+
+// Convert Promise to Result
+const promiseResult = await fromPromise(
+  fetch('/api/users/1'),
+  error => `Failed to fetch: ${error}`
+)
+```
+
+### Combining Results
+
+```typescript
+import { all, combine, combineWithAllErrors } from 'ts-error-handling'
+
+// Combine - stops at first error
+const result1 = combine([
+  validateEmail(email),
+  validatePassword(password),
+  validateAge(age)
+]) // Result<[string, string, number], string>
+
+// Combine with all errors collected
+const result2 = combineWithAllErrors([
+  validateEmail(email),
+  validatePassword(password),
+  validateAge(age)
+]) // Result<[string, string, number], string[]>
+
+// Alternative syntax using all()
+const result3 = all([ok(1), ok(2), ok(3)]) // Result<number[], string>
+```
+
+### Array Operations
+
+```typescript
+import { partition, traverse, traverseAsync } from 'ts-error-handling'
+
+// Transform array with Result-returning function
+const numbers = traverse(['1', '2', '3'], (s) => {
+  const n = Number.parseInt(s)
+  return Number.isNaN(n) ? err('Invalid') : ok(n)
+}) // Result<number[], string>
+
+// Async version
+const users = await traverseAsync([1, 2, 3], async (id) => {
+  return fetchUser(id)
+}) // Promise<Result<User[], ApiError>>
+
+// Partition into successes and failures
+const results = [ok(1), err('error'), ok(2)]
+const [successes, failures] = partition(results)
+// successes: [1, 2], failures: ['error']
+```
+
+### Working with Nullable Values
+
+```typescript
+import { fromNullable } from 'ts-error-handling'
+
+interface Config {
+  apiKey?: string
+}
+
+function getApiKey(config: Config): Result<string, string> {
+  return fromNullable(config.apiKey, 'API key is required')
+}
+```
+
+### Advanced Utilities
+
+```typescript
+import {
+  any,
+  filter,
+  flatten,
+  getOrElse,
+  swap,
+  tap,
+  toPromise,
+  unwrapOrThrow
+} from 'ts-error-handling'
+
+// Flatten nested Results
+const nested: Result<Result<number, string>, string> = ok(ok(42))
+const flat = flatten(nested) // Result<number, string>
+
+// Side effects without modifying Result
+const logged = tap(
+  result,
+  value => console.log('Success:', value),
+  error => console.error('Error:', error)
+)
+
+// Swap Ok and Err
+const swapped = swap(ok(42)) // Err(42)
+const swapped2 = swap(err('failed')) // Ok('failed')
+
+// Filter based on predicate
+const filtered = filter(
+  ok(42),
+  n => n > 0,
+  'must be positive'
+) // Ok(42) if > 0, else Err('must be positive')
+
+// Convert to exception at boundaries
+const value = unwrapOrThrow(result, e => new Error(e))
+
+// Convert to Promise
+const promise = toPromise(result) // Promise<T>
+
+// Get value or compute default
+const value2 = getOrElse(result, e => defaultValue)
+
+// Return first Ok, or last Err
+const first = any([err('e1'), ok(42), err('e2')]) // Ok(42)
+```
+
+### Async Operations
+
+```typescript
+import { parallel, sequence } from 'ts-error-handling'
+
+// Execute operations sequentially (stops at first error)
+const sequential = await sequence([
+  async () => fetchUser(1),
+  async () => fetchUser(2),
+  async () => fetchUser(3)
+]) // Result<User[], ApiError>
+
+// Execute operations in parallel
+const parallelResult = await parallel([
+  async () => fetchUser(1),
+  async () => fetchUser(2),
+  async () => fetchUser(3)
+]) // Result<User[], ApiError>
+```
+
 ## Why Use Result Types?
 
 1. **Explicit Error Handling**: Errors are part of the function signature
@@ -131,7 +292,7 @@ err('failed').expect('should work') // throws with custom message
 
 ## Examples
 
-See the [examples.ts](src/examples.ts) file for comprehensive examples including:
+See the [examples.ts](examples.ts) file for comprehensive examples including:
 
 - Async operations
 - Form validation with error collection
@@ -139,6 +300,89 @@ See the [examples.ts](src/examples.ts) file for comprehensive examples including
 - API client implementation
 - Array operations with `traverse`
 - Sequential and parallel execution
+
+## Complete API Reference
+
+### Core Functions
+
+| Function | Description |
+|----------|-------------|
+| `ok<T, E>(value: T)` | Creates a successful Result |
+| `err<T, E>(error: E)` | Creates a failed Result |
+| `isResult<T, E>(value: unknown)` | Type guard to check if value is a Result |
+
+### Result Methods
+
+| Method | Description |
+|--------|-------------|
+| `.map<U>(fn: (value: T) => U)` | Transform the Ok value |
+| `.mapErr<F>(fn: (error: E) => F)` | Transform the Err value |
+| `.andThen<U>(fn: (value: T) => Result<U, E>)` | Chain Result-returning operations |
+| `.orElse<F>(fn: (error: E) => Result<T, F>)` | Recover from errors |
+| `.match<U>(patterns: {...})` | Pattern matching on Ok/Err |
+| `.unwrap()` | Get value or throw |
+| `.unwrapOr(defaultValue: T)` | Get value or return default |
+| `.unwrapOrElse(fn: (error: E) => T)` | Get value or compute default |
+| `.expect(msg: string)` | Get value or throw with custom message |
+
+### Exception Handling
+
+| Function | Description |
+|----------|-------------|
+| `tryCatch<T, E>(fn, errorHandler?)` | Wrap function that might throw |
+| `tryCatchAsync<T, E>(fn, errorHandler?)` | Wrap async function that might throw |
+| `fromPromise<T, E>(promise, errorHandler?)` | Convert Promise to Result |
+
+### Combining Results
+
+| Function | Description |
+|----------|-------------|
+| `combine<T[]>(results)` | Combine Results, stop at first error |
+| `combineWithAllErrors<T[]>(results)` | Combine Results, collect all errors |
+| `all<T, E>(results)` | Collect all Ok values or return first Err |
+| `any<T, E>(results)` | Return first Ok or last Err |
+
+### Array Operations
+
+| Function | Description |
+|----------|-------------|
+| `traverse<T, U, E>(items, fn)` | Map over array with Result-returning function |
+| `traverseAsync<T, U, E>(items, fn)` | Async version of traverse |
+| `partition<T, E>(results)` | Split Results into [successes, failures] |
+
+### Async Operations
+
+| Function | Description |
+|----------|-------------|
+| `sequence<T, E>(operations)` | Execute async operations sequentially |
+| `parallel<T, E>(operations)` | Execute async operations in parallel |
+
+### Transformations
+
+| Function | Description |
+|----------|-------------|
+| `flatten<T, E>(result)` | Flatten nested Result<Result<T, E>, E> |
+| `swap<T, E>(result)` | Swap Ok and Err values |
+| `filter<T, E>(result, predicate, error)` | Filter Result based on predicate |
+
+### Utilities
+
+| Function | Description |
+|----------|-------------|
+| `fromNullable<T, E>(value, error)` | Convert nullable to Result |
+| `tap<T, E>(result, onOk?, onErr?)` | Side effects without modifying Result |
+| `unwrapOrThrow<T, E>(result, mapError?)` | Convert to exception at boundaries |
+| `toPromise<T, E>(result, mapError?)` | Convert Result to Promise |
+| `getOrElse<T, E>(result, fn)` | Get value or compute default |
+
+### Type Utilities
+
+| Type | Description |
+|------|-------------|
+| `Result<T, E>` | Union of Ok<T, E> and Err<T, E> |
+| `ResultAsync<T, E>` | Promise<Result<T, E>> |
+| `InferOkType<T>` | Extract Ok type from Result |
+| `InferErrType<T>` | Extract Err type from Result |
 
 ## Testing
 
