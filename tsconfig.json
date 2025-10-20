@@ -5,6 +5,9 @@
     "moduleDetection": "force",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "paths": {
+      "ts-error-handling": ["./src/index.ts"]
+    },
     "resolveJsonModule": true,
     "types": ["bun"],
     "allowImportingTsExtensions": true,
