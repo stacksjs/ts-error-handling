@@ -6,41 +6,383 @@
 <!-- [![npm downloads][npm-downloads-src]][npm-downloads-href] -->
 <!-- [![Codecov][codecov-src]][codecov-href] -->
 
-# bun-ts-starter
+# TypeScript Error Handling
 
-This is an opinionated TypeScript Starter kit to help kick-start development of your next Bun package.
+A fully typed error handling library for TypeScript, inspired by Rust's `Result` type and [neverthrow](https://github.com/supermacro/neverthrow). This library provides a type-safe way to handle errors without throwing exceptions, enabling railway-oriented programming patterns.
 
 ## Features
 
-This Starter Kit comes pre-configured with the following:
+- **Fully Typed**: Leverage TypeScript's type system for complete type safety
+- **Narrow Type Guards**: Automatic type narrowing with `isOk` and `isErr`
+- **Zero Dependencies**: Lightweight and self-contained
+- **Rust-Inspired API**: Familiar patterns from Rust's Result type
+- **Railway-Oriented Programming**: Chain operations safely with `map`, `andThen`, and more
+- **Async Support**: First-class support for async operations
+- **Comprehensive Utilities**: Combine, traverse, sequence, and more
 
-- 🛠️ [Powerful Build Process](https://github.com/oven-sh/bun) - via Bun
-- 💪🏽 [Fully Typed APIs](https://www.typescriptlang.org/) - via TypeScript
-- 📚 [Documentation-ready](https://vitepress.dev/) - via VitePress
-- ⌘ [CLI & Binary](https://www.npmjs.com/package/bunx) - via Bun & CAC
-- 🧪 [Built With Testing In Mind](https://bun.sh/docs/cli/test) - pre-configured unit-testing powered by [Bun](https://bun.sh/docs/cli/test)
-- 🤖 [Renovate](https://renovatebot.com/) - optimized & automated PR dependency updates
-- 🎨 [ESLint](https://eslint.org/) - for code linting _(and formatting)_
-- 📦️ [pkg.pr.new](https://pkg.pr.new) - Continuous (Preview) Releases for your libraries
-- 🐙 [GitHub Actions](https://github.com/features/actions) - runs your CI _(fixes code style issues, tags releases & creates its changelogs, runs the test suite, etc.)_
-
-## Get Started
-
-It's rather simple to get your package development started:
+## Installation
 
 ```bash
-# you may use this GitHub template or the following command:
-bunx degit stacksjs/ts-starter my-pkg
-cd my-pkg
+# bun
+bun add ts-error-handling
 
-bun i # install all deps
-bun run build # builds the library for production-ready use
+# npm
+npm install ts-error-handling
 
-# after you have successfully committed, you may create a "release"
-bun run release # automates git commits, versioning, and changelog generations
+# pnpm
+pnpm add ts-error-handling
 ```
 
-_Check out the package.json scripts for more commands._
+## Quick Start
+
+```typescript
+import type { Result } from 'ts-error-handling'
+import { err, ok } from 'ts-error-handling'
+
+function divide(a: number, b: number): Result<number, string> {
+  if (b === 0) {
+    return err('Division by zero')
+  }
+  return ok(a / b)
+}
+
+const result = divide(10, 2)
+
+if (result.isOk) {
+  console.log(result.value) // 5
+}
+else {
+  console.log(result.error) // Type-safe error handling
+}
+```
+
+## Core API
+
+### Creating Results
+
+```typescript
+import { err, ok } from 'ts-error-handling'
+
+const success = ok(42) // Result<number, never>
+const failure = err('error') // Result<never, string>
+```
+
+### Type Narrowing
+
+```typescript
+const result: Result<number, string> = ok(42)
+
+if (result.isOk) {
+  // TypeScript knows result is Ok<number, string>
+  console.log(result.value) // number
+}
+else {
+  // TypeScript knows result is Err<number, string>
+  console.log(result.error) // string
+}
+```
+
+### Transforming Results
+
+```typescript
+// map: Transform the Ok value
+ok(21).map(x => x * 2) // Ok(42)
+err('failed').map(x => x * 2) // Err('failed')
+
+// mapErr: Transform the Err value
+ok(42).mapErr(e => e.toUpperCase()) // Ok(42)
+err('failed').mapErr(e => e.toUpperCase()) // Err('FAILED')
+
+// andThen: Chain Result-returning operations
+ok(21)
+  .andThen(x => ok(x * 2))
+  .andThen(x => x > 40 ? ok(x) : err('too small')) // Ok(42)
+
+// orElse: Recover from errors
+err('failed')
+  .orElse(e => ok(0)) // Ok(0)
+```
+
+### Pattern Matching
+
+```typescript
+const message = result.match({
+  ok: value => `Success: ${value}`,
+  err: error => `Error: ${error}`
+})
+```
+
+### Unwrapping Values
+
+```typescript
+ok(42).unwrap() // 42
+err('failed').unwrap() // throws Error
+
+ok(42).unwrapOr(0) // 42
+err('failed').unwrapOr(0) // 0
+
+ok(42).unwrapOrElse(e => 0) // 42
+err('failed').unwrapOrElse(e => 0) // 0
+
+ok(42).expect('should work') // 42
+err('failed').expect('should work') // throws with custom message
+```
+
+## Utility Functions
+
+### Exception Handling
+
+```typescript
+import { fromPromise, tryCatch, tryCatchAsync } from 'ts-error-handling'
+
+// Synchronous exception handling
+const result = tryCatch(
+  () => JSON.parse(jsonString),
+  error => `Parse error: ${error}`
+)
+
+// Async exception handling
+const asyncResult = await tryCatchAsync(
+  async () => await fetch('/api/data'),
+  error => new ApiError(error)
+)
+
+// Convert Promise to Result
+const promiseResult = await fromPromise(
+  fetch('/api/users/1'),
+  error => `Failed to fetch: ${error}`
+)
+```
+
+### Combining Results
+
+```typescript
+import { all, combine, combineWithAllErrors } from 'ts-error-handling'
+
+// Combine - stops at first error
+const result1 = combine([
+  validateEmail(email),
+  validatePassword(password),
+  validateAge(age)
+]) // Result<[string, string, number], string>
+
+// Combine with all errors collected
+const result2 = combineWithAllErrors([
+  validateEmail(email),
+  validatePassword(password),
+  validateAge(age)
+]) // Result<[string, string, number], string[]>
+
+// Alternative syntax using all()
+const result3 = all([ok(1), ok(2), ok(3)]) // Result<number[], string>
+```
+
+### Array Operations
+
+```typescript
+import { partition, traverse, traverseAsync } from 'ts-error-handling'
+
+// Transform array with Result-returning function
+const numbers = traverse(['1', '2', '3'], (s) => {
+  const n = Number.parseInt(s)
+  return Number.isNaN(n) ? err('Invalid') : ok(n)
+}) // Result<number[], string>
+
+// Async version
+const users = await traverseAsync([1, 2, 3], async (id) => {
+  return fetchUser(id)
+}) // Promise<Result<User[], ApiError>>
+
+// Partition into successes and failures
+const results = [ok(1), err('error'), ok(2)]
+const [successes, failures] = partition(results)
+// successes: [1, 2], failures: ['error']
+```
+
+### Working with Nullable Values
+
+```typescript
+import { fromNullable } from 'ts-error-handling'
+
+interface Config {
+  apiKey?: string
+}
+
+function getApiKey(config: Config): Result<string, string> {
+  return fromNullable(config.apiKey, 'API key is required')
+}
+```
+
+### Advanced Utilities
+
+```typescript
+import {
+  any,
+  filter,
+  flatten,
+  getOrElse,
+  swap,
+  tap,
+  toPromise,
+  unwrapOrThrow
+} from 'ts-error-handling'
+
+// Flatten nested Results
+const nested: Result<Result<number, string>, string> = ok(ok(42))
+const flat = flatten(nested) // Result<number, string>
+
+// Side effects without modifying Result
+const logged = tap(
+  result,
+  value => console.log('Success:', value),
+  error => console.error('Error:', error)
+)
+
+// Swap Ok and Err
+const swapped = swap(ok(42)) // Err(42)
+const swapped2 = swap(err('failed')) // Ok('failed')
+
+// Filter based on predicate
+const filtered = filter(
+  ok(42),
+  n => n > 0,
+  'must be positive'
+) // Ok(42) if > 0, else Err('must be positive')
+
+// Convert to exception at boundaries
+const value = unwrapOrThrow(result, e => new Error(e))
+
+// Convert to Promise
+const promise = toPromise(result) // Promise<T>
+
+// Get value or compute default
+const value2 = getOrElse(result, e => defaultValue)
+
+// Return first Ok, or last Err
+const first = any([err('e1'), ok(42), err('e2')]) // Ok(42)
+```
+
+### Async Operations
+
+```typescript
+import { parallel, sequence } from 'ts-error-handling'
+
+// Execute operations sequentially (stops at first error)
+const sequential = await sequence([
+  async () => fetchUser(1),
+  async () => fetchUser(2),
+  async () => fetchUser(3)
+]) // Result<User[], ApiError>
+
+// Execute operations in parallel
+const parallelResult = await parallel([
+  async () => fetchUser(1),
+  async () => fetchUser(2),
+  async () => fetchUser(3)
+]) // Result<User[], ApiError>
+```
+
+## Why Use Result Types?
+
+1. **Explicit Error Handling**: Errors are part of the function signature
+2. **No Hidden Control Flow**: No try/catch blocks, exceptions are values
+3. **Type Safety**: The compiler enforces error handling
+4. **Composability**: Chain operations without nested error handling
+5. **Self-Documenting**: Function signatures show what can fail and how
+
+## Examples
+
+See the [examples.ts](examples.ts) file for comprehensive examples including:
+
+- Async operations
+- Form validation with error collection
+- Railway-oriented programming
+- API client implementation
+- Array operations with `traverse`
+- Sequential and parallel execution
+
+## Complete API Reference
+
+### Core Functions
+
+| Function | Description |
+|----------|-------------|
+| `ok<T, E>(value: T)` | Creates a successful Result |
+| `err<T, E>(error: E)` | Creates a failed Result |
+| `isResult<T, E>(value: unknown)` | Type guard to check if value is a Result |
+
+### Result Methods
+
+| Method | Description |
+|--------|-------------|
+| `.map<U>(fn: (value: T) => U)` | Transform the Ok value |
+| `.mapErr<F>(fn: (error: E) => F)` | Transform the Err value |
+| `.andThen<U>(fn: (value: T) => Result<U, E>)` | Chain Result-returning operations |
+| `.orElse<F>(fn: (error: E) => Result<T, F>)` | Recover from errors |
+| `.match<U>(patterns: {...})` | Pattern matching on Ok/Err |
+| `.unwrap()` | Get value or throw |
+| `.unwrapOr(defaultValue: T)` | Get value or return default |
+| `.unwrapOrElse(fn: (error: E) => T)` | Get value or compute default |
+| `.expect(msg: string)` | Get value or throw with custom message |
+
+### Exception Handling
+
+| Function | Description |
+|----------|-------------|
+| `tryCatch<T, E>(fn, errorHandler?)` | Wrap function that might throw |
+| `tryCatchAsync<T, E>(fn, errorHandler?)` | Wrap async function that might throw |
+| `fromPromise<T, E>(promise, errorHandler?)` | Convert Promise to Result |
+
+### Combining Results
+
+| Function | Description |
+|----------|-------------|
+| `combine<T[]>(results)` | Combine Results, stop at first error |
+| `combineWithAllErrors<T[]>(results)` | Combine Results, collect all errors |
+| `all<T, E>(results)` | Collect all Ok values or return first Err |
+| `any<T, E>(results)` | Return first Ok or last Err |
+
+### Array Operations
+
+| Function | Description |
+|----------|-------------|
+| `traverse<T, U, E>(items, fn)` | Map over array with Result-returning function |
+| `traverseAsync<T, U, E>(items, fn)` | Async version of traverse |
+| `partition<T, E>(results)` | Split Results into [successes, failures] |
+
+### Async Operations
+
+| Function | Description |
+|----------|-------------|
+| `sequence<T, E>(operations)` | Execute async operations sequentially |
+| `parallel<T, E>(operations)` | Execute async operations in parallel |
+
+### Transformations
+
+| Function | Description |
+|----------|-------------|
+| `flatten<T, E>(result)` | Flatten nested Result<Result<T, E>, E> |
+| `swap<T, E>(result)` | Swap Ok and Err values |
+| `filter<T, E>(result, predicate, error)` | Filter Result based on predicate |
+
+### Utilities
+
+| Function | Description |
+|----------|-------------|
+| `fromNullable<T, E>(value, error)` | Convert nullable to Result |
+| `tap<T, E>(result, onOk?, onErr?)` | Side effects without modifying Result |
+| `unwrapOrThrow<T, E>(result, mapError?)` | Convert to exception at boundaries |
+| `toPromise<T, E>(result, mapError?)` | Convert Result to Promise |
+| `getOrElse<T, E>(result, fn)` | Get value or compute default |
+
+### Type Utilities
+
+| Type | Description |
+|------|-------------|
+| `Result<T, E>` | Union of Ok<T, E> and Err<T, E> |
+| `ResultAsync<T, E>` | Promise<Result<T, E>> |
+| `InferOkType<T>` | Extract Ok type from Result |
+| `InferErrType<T>` | Extract Err type from Result |
 
 ## Testing
 

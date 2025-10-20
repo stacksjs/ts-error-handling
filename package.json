@@ -1,8 +1,8 @@
 {
   "name": "ts-error-handling",
   "type": "module",
-  "version": "0.0.0",
-  "description": "Error handling in TypeScript",
+  "version": "0.1.0",
+  "description": "A fully typed error handling library for TypeScript inspired by Rust's Result type.",
   "author": "Chris Breuer <chris@stacksjs.org>",
   "license": "MIT",
   "homepage": "https://github.com/stacksjs/ts-error-handling#readme",
@@ -13,7 +13,19 @@
   "bugs": {
     "url": "https://github.com/stacksjs/ts-error-handling/issues"
   },
-  "keywords": ["typescript", "error-handling", "kit", "bun", "package"],
+  "keywords": [
+    "typescript",
+    "error-handling",
+    "result",
+    "rust",
+    "neverthrow",
+    "functional",
+    "railway-oriented-programming",
+    "monads",
+    "type-safe",
+    "async",
+    "exceptions"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -25,29 +37,28 @@
   },
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["README.md", "dist"],
+  "files": [
+    "README.md",
+    "dist"
+  ],
   "scripts": {
-    "build": "bun --bun build.ts && bun run compile",
+    "build": "bun --bun build.ts",
     "fresh": "bunx rimraf node_modules/ bun.lock && bun i",
     "prepublishOnly": "bun --bun run build",
     "test": "bun test",
     "lint": "bunx --bun eslint .",
     "lint:fix": "bunx --bun eslint . --fix",
-    "changelog": "bunx logsmith --verbose",
-    "changelog:generate": "bunx logsmith --output CHANGELOG.md",
-    "release": "bun run changelog:generate && bunx bumpx prompt --recursive",
+    "changelog": "bunx --bun logsmith --verbose",
+    "changelog:generate": "bunx --bun logsmith --output CHANGELOG.md",
+    "release": "bun run changelog:generate && bunx --bun bumpx prompt --recursive",
     "dev:docs": "bun --bun vitepress dev docs",
     "build:docs": "bun --bun vitepress build docs",
     "preview:docs": "bun --bun vitepress preview docs",
     "typecheck": "bun --bun tsc --noEmit"
   },
   "devDependencies": {
-    "@stacksjs/docs": "^0.70.23",
     "@stacksjs/eslint-config": "^4.14.0-beta.3",
     "better-dx": "^0.1.7"
-  },
-  "overrides": {
-    "unconfig": "0.3.10"
   },
   "git-hooks": {
     "pre-commit": {
