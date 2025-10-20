@@ -34,19 +34,7 @@ jobs:
         env:
           BUN_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-      - name: Create GitHub release
-        run: bunx changelogithub
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Attach Binaries
-        uses: stacksjs/action-releaser@v1.1.0
-        with:
-          files: |
-            bin/bin-name-linux-x64
-            bin/bin-name-linux-arm64
-            bin/bin-name-windows-x64.exe
-            bin/bin-name-darwin-x64
-            bin/bin-name-darwin-arm64
+      - name: Create GitHub Release
+        uses: stacksjs/action-releaser@v1.2.6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
