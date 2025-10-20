@@ -29,7 +29,8 @@ bun add ts-error-handling
 ## Quick Start
 
 ```typescript
-import { ok, err, type Result } from 'ts-error-handling'
+import type { Result } from 'ts-error-handling'
+import { err, ok } from 'ts-error-handling'
 
 function divide(a: number, b: number): Result<number, string> {
   if (b === 0) {
@@ -42,7 +43,8 @@ const result = divide(10, 2)
 
 if (result.isOk) {
   console.log(result.value) // 5
-} else {
+}
+else {
   console.log(result.error) // Type-safe error handling
 }
 ```
@@ -52,10 +54,10 @@ if (result.isOk) {
 ### Creating Results
 
 ```typescript
-import { ok, err } from 'ts-error-handling'
+import { err, ok } from 'ts-error-handling'
 
-const success = ok(42)              // Result<number, never>
-const failure = err('error')        // Result<never, string>
+const success = ok(42) // Result<number, never>
+const failure = err('error') // Result<never, string>
 ```
 
 ### Type Narrowing
@@ -66,7 +68,8 @@ const result: Result<number, string> = ok(42)
 if (result.isOk) {
   // TypeScript knows result is Ok<number, string>
   console.log(result.value) // number
-} else {
+}
+else {
   // TypeScript knows result is Err<number, string>
   console.log(result.error) // string
 }
@@ -105,17 +108,17 @@ const message = result.match({
 ### Unwrapping Values
 
 ```typescript
-ok(42).unwrap()           // 42
-err('failed').unwrap()    // throws Error
+ok(42).unwrap() // 42
+err('failed').unwrap() // throws Error
 
-ok(42).unwrapOr(0)        // 42
+ok(42).unwrapOr(0) // 42
 err('failed').unwrapOr(0) // 0
 
-ok(42).unwrapOrElse(e => 0)        // 42
+ok(42).unwrapOrElse(e => 0) // 42
 err('failed').unwrapOrElse(e => 0) // 0
 
-ok(42).expect('should work')          // 42
-err('failed').expect('should work')   // throws with custom message
+ok(42).expect('should work') // 42
+err('failed').expect('should work') // throws with custom message
 ```
 
 ## Why Use Result Types?

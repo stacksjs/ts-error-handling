@@ -5,6 +5,9 @@
     "moduleDetection": "force",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "paths": {
+      "ts-error-handling": ["./src/index.ts"]
+    },
     "resolveJsonModule": true,
     "types": ["bun"],
     "allowImportingTsExtensions": true,
@@ -19,9 +22,6 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "skipDefaultLibCheck": true,
-    "paths": {
-      "ts-error-handling": ["./src/index.ts"]
-    },
     "skipLibCheck": true
   }
 }

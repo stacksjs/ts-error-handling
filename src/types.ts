@@ -11,15 +11,15 @@ export interface Ok<T, E> {
   readonly value: T
   readonly _tag: 'Ok'
 
-  map<U>(fn: (value: T) => U): Result<U, E>
-  mapErr<F>(_fn: (error: E) => F): Result<T, F>
-  andThen<U>(fn: (value: T) => Result<U, E>): Result<U, E>
-  orElse<F>(_fn: (error: E) => Result<T, F>): Result<T, F>
-  match<U>(patterns: { ok: (value: T) => U, err: (error: E) => U }): U
-  unwrap(): T
-  unwrapOr(_defaultValue: T): T
-  unwrapOrElse(_fn: (error: E) => T): T
-  expect(_msg: string): T
+  map: <U>(fn: (value: T) => U) => Result<U, E>
+  mapErr: <F>(_fn: (error: E) => F) => Result<T, F>
+  andThen: <U>(fn: (value: T) => Result<U, E>) => Result<U, E>
+  orElse: <F>(_fn: (error: E) => Result<T, F>) => Result<T, F>
+  match: <U>(patterns: { ok: (value: T) => U, err: (error: E) => U }) => U
+  unwrap: () => T
+  unwrapOr: (_defaultValue: T) => T
+  unwrapOrElse: (_fn: (error: E) => T) => T
+  expect: (_msg: string) => T
 }
 
 export interface Err<T, E> {
@@ -28,15 +28,15 @@ export interface Err<T, E> {
   readonly error: E
   readonly _tag: 'Err'
 
-  map<U>(_fn: (value: T) => U): Result<U, E>
-  mapErr<F>(fn: (error: E) => F): Result<T, F>
-  andThen<U>(_fn: (value: T) => Result<U, E>): Result<U, E>
-  orElse<F>(fn: (error: E) => Result<T, F>): Result<T, F>
-  match<U>(patterns: { ok: (value: T) => U, err: (error: E) => U }): U
-  unwrap(): never
-  unwrapOr(defaultValue: T): T
-  unwrapOrElse(fn: (error: E) => T): T
-  expect(msg: string): never
+  map: <U>(_fn: (value: T) => U) => Result<U, E>
+  mapErr: <F>(fn: (error: E) => F) => Result<T, F>
+  andThen: <U>(_fn: (value: T) => Result<U, E>) => Result<U, E>
+  orElse: <F>(fn: (error: E) => Result<T, F>) => Result<T, F>
+  match: <U>(patterns: { ok: (value: T) => U, err: (error: E) => U }) => U
+  unwrap: () => never
+  unwrapOr: (defaultValue: T) => T
+  unwrapOrElse: (fn: (error: E) => T) => T
+  expect: (msg: string) => never
 }
 
 // Async Result type
