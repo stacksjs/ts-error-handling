@@ -6,41 +6,136 @@
 <!-- [![npm downloads][npm-downloads-src]][npm-downloads-href] -->
 <!-- [![Codecov][codecov-src]][codecov-href] -->
 
-# bun-ts-starter
+# TypeScript Error Handling
 
-This is an opinionated TypeScript Starter kit to help kick-start development of your next Bun package.
+A fully typed error handling library for TypeScript, inspired by Rust's `Result` type and [neverthrow](https://github.com/supermacro/neverthrow). This library provides a type-safe way to handle errors without throwing exceptions, enabling railway-oriented programming patterns.
 
 ## Features
 
-This Starter Kit comes pre-configured with the following:
+- **Fully Typed**: Leverage TypeScript's type system for complete type safety
+- **Narrow Type Guards**: Automatic type narrowing with `isOk` and `isErr`
+- **Zero Dependencies**: Lightweight and self-contained
+- **Rust-Inspired API**: Familiar patterns from Rust's Result type
+- **Railway-Oriented Programming**: Chain operations safely with `map`, `andThen`, and more
+- **Async Support**: First-class support for async operations
+- **Comprehensive Utilities**: Combine, traverse, sequence, and more
 
-- 🛠️ [Powerful Build Process](https://github.com/oven-sh/bun) - via Bun
-- 💪🏽 [Fully Typed APIs](https://www.typescriptlang.org/) - via TypeScript
-- 📚 [Documentation-ready](https://vitepress.dev/) - via VitePress
-- ⌘ [CLI & Binary](https://www.npmjs.com/package/bunx) - via Bun & CAC
-- 🧪 [Built With Testing In Mind](https://bun.sh/docs/cli/test) - pre-configured unit-testing powered by [Bun](https://bun.sh/docs/cli/test)
-- 🤖 [Renovate](https://renovatebot.com/) - optimized & automated PR dependency updates
-- 🎨 [ESLint](https://eslint.org/) - for code linting _(and formatting)_
-- 📦️ [pkg.pr.new](https://pkg.pr.new) - Continuous (Preview) Releases for your libraries
-- 🐙 [GitHub Actions](https://github.com/features/actions) - runs your CI _(fixes code style issues, tags releases & creates its changelogs, runs the test suite, etc.)_
-
-## Get Started
-
-It's rather simple to get your package development started:
+## Installation
 
 ```bash
-# you may use this GitHub template or the following command:
-bunx degit stacksjs/ts-starter my-pkg
-cd my-pkg
-
-bun i # install all deps
-bun run build # builds the library for production-ready use
-
-# after you have successfully committed, you may create a "release"
-bun run release # automates git commits, versioning, and changelog generations
+bun add ts-error-handling
 ```
 
-_Check out the package.json scripts for more commands._
+## Quick Start
+
+```typescript
+import { ok, err, type Result } from 'ts-error-handling'
+
+function divide(a: number, b: number): Result<number, string> {
+  if (b === 0) {
+    return err('Division by zero')
+  }
+  return ok(a / b)
+}
+
+const result = divide(10, 2)
+
+if (result.isOk) {
+  console.log(result.value) // 5
+} else {
+  console.log(result.error) // Type-safe error handling
+}
+```
+
+## Core API
+
+### Creating Results
+
+```typescript
+import { ok, err } from 'ts-error-handling'
+
+const success = ok(42)              // Result<number, never>
+const failure = err('error')        // Result<never, string>
+```
+
+### Type Narrowing
+
+```typescript
+const result: Result<number, string> = ok(42)
+
+if (result.isOk) {
+  // TypeScript knows result is Ok<number, string>
+  console.log(result.value) // number
+} else {
+  // TypeScript knows result is Err<number, string>
+  console.log(result.error) // string
+}
+```
+
+### Transforming Results
+
+```typescript
+// map: Transform the Ok value
+ok(21).map(x => x * 2) // Ok(42)
+err('failed').map(x => x * 2) // Err('failed')
+
+// mapErr: Transform the Err value
+ok(42).mapErr(e => e.toUpperCase()) // Ok(42)
+err('failed').mapErr(e => e.toUpperCase()) // Err('FAILED')
+
+// andThen: Chain Result-returning operations
+ok(21)
+  .andThen(x => ok(x * 2))
+  .andThen(x => x > 40 ? ok(x) : err('too small')) // Ok(42)
+
+// orElse: Recover from errors
+err('failed')
+  .orElse(e => ok(0)) // Ok(0)
+```
+
+### Pattern Matching
+
+```typescript
+const message = result.match({
+  ok: value => `Success: ${value}`,
+  err: error => `Error: ${error}`
+})
+```
+
+### Unwrapping Values
+
+```typescript
+ok(42).unwrap()           // 42
+err('failed').unwrap()    // throws Error
+
+ok(42).unwrapOr(0)        // 42
+err('failed').unwrapOr(0) // 0
+
+ok(42).unwrapOrElse(e => 0)        // 42
+err('failed').unwrapOrElse(e => 0) // 0
+
+ok(42).expect('should work')          // 42
+err('failed').expect('should work')   // throws with custom message
+```
+
+## Why Use Result Types?
+
+1. **Explicit Error Handling**: Errors are part of the function signature
+2. **No Hidden Control Flow**: No try/catch blocks, exceptions are values
+3. **Type Safety**: The compiler enforces error handling
+4. **Composability**: Chain operations without nested error handling
+5. **Self-Documenting**: Function signatures show what can fail and how
+
+## Examples
+
+See the [examples.ts](src/examples.ts) file for comprehensive examples including:
+
+- Async operations
+- Form validation with error collection
+- Railway-oriented programming
+- API client implementation
+- Array operations with `traverse`
+- Sequential and parallel execution
 
 ## Testing
 
