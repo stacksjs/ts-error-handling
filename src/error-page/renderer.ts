@@ -1,4 +1,4 @@
-import type { ErrorPageConfig, ErrorPageData, QueryInfo, StackFrame } from './types'
+import type { ErrorPageConfig, ErrorPageData, JobContext, QueryInfo, StackFrame, UserContext } from './types'
 import { HTTP_ERRORS } from './types'
 import { groupVendorFrames } from './stack-trace'
 import { ERROR_PAGE_CSS } from './styles'
@@ -197,6 +197,74 @@ function renderContextTable(context: Record<string, unknown>): string {
         `).join('')}
       </tbody>
     </table>
+  `
+}
+
+/**
+ * Render user context section
+ */
+function renderUserSection(user?: UserContext): string {
+  if (!user) return ''
+
+  const hasData = user.id || user.email || user.name || user.roles?.length
+
+  if (!hasData) return ''
+
+  return `
+    <div class="section fade-in">
+      <div class="section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        User
+      </div>
+      <div class="section-content">
+        <table class="context-table">
+          <tbody>
+            ${user.id ? `<tr><th>ID</th><td>${escapeHtml(String(user.id))}</td></tr>` : ''}
+            ${user.email ? `<tr><th>Email</th><td>${escapeHtml(user.email)}</td></tr>` : ''}
+            ${user.name ? `<tr><th>Name</th><td>${escapeHtml(user.name)}</td></tr>` : ''}
+            ${user.roles?.length ? `<tr><th>Roles</th><td>${user.roles.map(r => escapeHtml(r)).join(', ')}</td></tr>` : ''}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `
+}
+
+/**
+ * Render job context section (for queue job errors)
+ */
+function renderJobSection(job?: JobContext): string {
+  if (!job) return ''
+
+  const hasData = job.name || job.queue || job.uuid || job.attempt
+
+  if (!hasData) return ''
+
+  return `
+    <div class="section fade-in">
+      <div class="section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+        </svg>
+        Queue Job
+      </div>
+      <div class="section-content">
+        <table class="context-table">
+          <tbody>
+            ${job.name ? `<tr><th>Job</th><td>${escapeHtml(job.name)}</td></tr>` : ''}
+            ${job.queue ? `<tr><th>Queue</th><td>${escapeHtml(job.queue)}</td></tr>` : ''}
+            ${job.uuid ? `<tr><th>UUID</th><td><code>${escapeHtml(job.uuid)}</code></td></tr>` : ''}
+            ${job.attempt !== undefined ? `<tr><th>Attempt</th><td>${job.attempt}${job.maxAttempts ? ` / ${job.maxAttempts}` : ''}</td></tr>` : ''}
+            ${job.timeout ? `<tr><th>Timeout</th><td>${job.timeout}s</td></tr>` : ''}
+            ${job.payload ? `<tr><th>Payload</th><td><pre style="margin: 0; font-size: 0.875rem; white-space: pre-wrap;">${escapeHtml(JSON.stringify(job.payload, null, 2))}</pre></td></tr>` : ''}
+          </tbody>
+        </table>
+      </div>
+    </div>
   `
 }
 
@@ -438,6 +506,8 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
       </div>
 
       ${routingSection}
+      ${renderUserSection(data.user)}
+      ${renderJobSection(data.job)}
       ${envSection}
       ${queriesSection}
       ${requestDetailsSection}

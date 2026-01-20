@@ -1,4 +1,4 @@
-import type { ErrorPageConfig, ErrorPageData, EnvironmentContext, QueryInfo, RequestContext, RoutingContext } from './types'
+import type { ErrorPageConfig, ErrorPageData, EnvironmentContext, JobContext, QueryInfo, RequestContext, RoutingContext, UserContext } from './types'
 import { createErrorPageDataFromError, enhanceStackFrames, parseStackTrace } from './stack-trace'
 import { renderErrorPage, renderProductionErrorPage } from './renderer'
 
@@ -11,6 +11,8 @@ export class ErrorHandler {
   private requestContext?: RequestContext
   private routingContext?: RoutingContext
   private environmentContext?: EnvironmentContext
+  private userContext?: UserContext
+  private jobContext?: JobContext
   private customContext: Record<string, unknown> = {}
 
   constructor(config: ErrorPageConfig = {}) {
@@ -106,6 +108,22 @@ export class ErrorHandler {
   }
 
   /**
+   * Set authenticated user context
+   */
+  setUser(user: UserContext): this {
+    this.userContext = user
+    return this
+  }
+
+  /**
+   * Set queue job context (for errors in background jobs)
+   */
+  setJob(job: JobContext): this {
+    this.jobContext = job
+    return this
+  }
+
+  /**
    * Add a database query to track
    */
   addQuery(query: string, time?: number, connection?: string): this {
@@ -154,6 +172,8 @@ export class ErrorHandler {
       routing: this.routingContext,
       environment: this.environmentContext,
       queries: [...this.queries],
+      user: this.userContext,
+      job: this.jobContext,
       context: { ...this.customContext },
       handled: false,
     }
@@ -199,6 +219,8 @@ export class ErrorHandler {
     handler.requestContext = this.requestContext
     handler.routingContext = this.routingContext
     handler.environmentContext = this.environmentContext
+    handler.userContext = this.userContext
+    handler.jobContext = this.jobContext
     handler.queries = [...this.queries]
     handler.customContext = { ...this.customContext }
     return handler

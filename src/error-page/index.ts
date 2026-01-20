@@ -11,10 +11,12 @@ export type {
   ErrorPageData,
   HttpError,
   HttpStatusCode,
+  JobContext,
   QueryInfo,
   RequestContext,
   RoutingContext,
   StackFrame,
+  UserContext,
 } from './types'
 
 export { HTTP_ERRORS } from './types'

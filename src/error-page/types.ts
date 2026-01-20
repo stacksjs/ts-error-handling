@@ -81,6 +81,38 @@ export interface QueryInfo {
   connection?: string
 }
 
+export interface UserContext {
+  /** User ID */
+  id?: string | number
+  /** User email */
+  email?: string
+  /** User name */
+  name?: string
+  /** User roles */
+  roles?: string[]
+  /** Additional user attributes */
+  attributes?: Record<string, unknown>
+}
+
+export interface JobContext {
+  /** Job class/name */
+  name?: string
+  /** Queue name */
+  queue?: string
+  /** Job UUID */
+  uuid?: string
+  /** Current attempt number */
+  attempt?: number
+  /** Maximum attempts */
+  maxAttempts?: number
+  /** Job payload (sanitized) */
+  payload?: Record<string, unknown>
+  /** When the job was dispatched */
+  dispatchedAt?: Date
+  /** Job timeout in seconds */
+  timeout?: number
+}
+
 export interface ErrorPageData {
   /** Error class/type name */
   exceptionClass: string
@@ -108,6 +140,10 @@ export interface ErrorPageData {
   environment?: EnvironmentContext
   /** Database queries executed before error */
   queries?: QueryInfo[]
+  /** Authenticated user context */
+  user?: UserContext
+  /** Queue job context (if error occurred in a job) */
+  job?: JobContext
   /** Custom context data */
   context?: Record<string, unknown>
   /** Documentation links */
