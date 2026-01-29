@@ -1,0 +1,170 @@
+<script server>
+import { defineProps, withDefaults } from 'stx'
+
+interface ProductionErrorProps {
+  status: number
+  title?: string
+  message?: string
+  showBackButton?: boolean
+}
+
+const props = withDefaults(defineProps<ProductionErrorProps>(), {
+  status: 500,
+  showBackButton: true,
+})
+
+const statusMessages: Record<number, { title: string; message: string }> = {
+  400: { title: 'Bad Request', message: 'The server could not understand the request.' },
+  401: { title: 'Unauthorized', message: 'Authentication is required to access this resource.' },
+  403: { title: 'Forbidden', message: 'You do not have permission to access this resource.' },
+  404: { title: 'Not Found', message: 'The requested resource could not be found.' },
+  405: { title: 'Method Not Allowed', message: 'The HTTP method is not allowed for this resource.' },
+  408: { title: 'Request Timeout', message: 'The server timed out waiting for the request.' },
+  422: { title: 'Unprocessable Entity', message: 'The request was well-formed but could not be processed.' },
+  429: { title: 'Too Many Requests', message: 'You have exceeded the rate limit.' },
+  500: { title: 'Internal Server Error', message: 'An unexpected error occurred on the server.' },
+  502: { title: 'Bad Gateway', message: 'The server received an invalid response from an upstream server.' },
+  503: { title: 'Service Unavailable', message: 'The service is temporarily unavailable.' },
+  504: { title: 'Gateway Timeout', message: 'The server did not receive a timely response from an upstream server.' },
+}
+
+const statusInfo = statusMessages[props.status] || { title: 'Error', message: 'An unexpected error occurred.' }
+const title = props.title || statusInfo.title
+const message = props.message || statusInfo.message
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ props.status }} - {{ title }}</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .container {
+      text-align: center;
+      max-width: 32rem;
+    }
+    .status {
+      font-size: 8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 1rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .message {
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+    .actions {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+    .btn-secondary {
+      background: rgba(107, 114, 128, 0.2);
+      color: #9ca3af;
+    }
+    .btn-secondary:hover {
+      background: rgba(107, 114, 128, 0.3);
+      color: #e5e7eb;
+    }
+    .decoration {
+      position: fixed;
+      pointer-events: none;
+      opacity: 0.03;
+    }
+    .decoration-1 {
+      top: 10%;
+      left: 10%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, #ef4444 0%, transparent 70%);
+    }
+    .decoration-2 {
+      bottom: 20%;
+      right: 15%;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, #ef4444 0%, transparent 70%);
+    }
+  </style>
+</head>
+<body>
+  <div class="decoration decoration-1"></div>
+  <div class="decoration decoration-2"></div>
+
+  <div class="container">
+    <div class="status">{{ props.status }}</div>
+    <h1 class="title">{{ title }}</h1>
+    <p class="message">{{ message }}</p>
+
+    @if (props.showBackButton)
+      <div class="actions">
+        <a href="javascript:history.back()" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Go Back
+        </a>
+        <a href="/" class="btn btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          Home
+        </a>
+      </div>
+    @endif
+  </div>
+</body>
+</html>
