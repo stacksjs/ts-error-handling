@@ -1,0 +1,320 @@
+<script server>
+import { defineProps, withDefaults } from 'stx'
+
+interface StackFrame {
+  file: string
+  line: number
+  column?: number
+  function?: string
+  method?: string
+  isApp: boolean
+  isVendor: boolean
+  codeSnippet?: {
+    startLine: number
+    lines: Array<{ line: number; code: string; highlighted: boolean }>
+  }
+}
+
+interface ErrorPageProps {
+  exceptionClass: string
+  message: string
+  code?: string | number
+  file?: string
+  line?: number
+  column?: number
+  stackFrames: StackFrame[]
+  handled?: boolean
+  httpStatus?: number
+  httpMethod?: string
+  requestUrl?: string
+  headers?: Record<string, string>
+  routing?: {
+    controller?: string
+    routeName?: string
+    middleware?: string[]
+  }
+  environment?: {
+    nodeVersion?: string
+    bunVersion?: string
+    framework?: string
+    frameworkVersion?: string
+    platform?: string
+    cwd?: string
+  }
+  queries?: Array<{ query: string; time?: number; connection?: string }>
+  theme?: 'light' | 'dark' | 'auto'
+  appName?: string
+}
+
+const props = withDefaults(defineProps<ErrorPageProps>(), {
+  handled: false,
+  httpStatus: 500,
+  theme: 'auto',
+  appName: 'Application',
+  stackFrames: [],
+})
+
+function getStatusTitle(status: number): string {
+  const titles: Record<number, string> = {
+    400: 'Bad Request',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    404: 'Not Found',
+    405: 'Method Not Allowed',
+    422: 'Unprocessable Entity',
+    429: 'Too Many Requests',
+    500: 'Internal Server Error',
+    502: 'Bad Gateway',
+    503: 'Service Unavailable',
+    504: 'Gateway Timeout',
+  }
+  return titles[status] || 'Error'
+}
+
+const statusTitle = getStatusTitle(props.httpStatus || 500)
+const appFrames = props.stackFrames.filter(f => f.isApp)
+const vendorFrames = props.stackFrames.filter(f => f.isVendor)
+</script>
+
+<!DOCTYPE html>
+<html lang="en" class="{{ props.theme }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ props.exceptionClass }} - {{ props.appName }}</title>
+  <style>
+    @include('./error-styles.css')
+  </style>
+</head>
+<body class="{{ props.theme }}">
+  <!-- Header -->
+  <header class="error-header">
+    <div class="error-header-left">
+      <span class="error-header-status">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+          <circle cx="6" cy="6" r="5"/>
+        </svg>
+        {{ statusTitle }}
+      </span>
+      <span class="error-header-type">{{ props.exceptionClass }}</span>
+    </div>
+    <div class="error-header-actions">
+      <button class="btn" onclick="copyAsMarkdown()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        Copy as Markdown
+      </button>
+    </div>
+  </header>
+
+  <main class="error-main">
+    <div class="error-page-container">
+      <!-- Error Card -->
+      <div class="error-card fade-in">
+        <div class="error-card-header">
+          <h1 class="error-class">{{ props.exceptionClass }}</h1>
+          @if (props.file)
+            <div class="error-file">{{ props.file }}@if (props.line):{{ props.line }}@endif</div>
+          @endif
+          <p class="error-message">{{ props.message }}</p>
+
+          <div class="badges">
+            @if (props.environment?.framework)
+              <span class="badge badge-gray">{{ props.environment.framework }} {{ props.environment.frameworkVersion || '' }}</span>
+            @endif
+            @if (props.environment?.nodeVersion)
+              <span class="badge badge-gray">Node {{ props.environment.nodeVersion }}</span>
+            @endif
+            @if (props.environment?.bunVersion)
+              <span class="badge badge-gray">Bun {{ props.environment.bunVersion }}</span>
+            @endif
+            <span class="badge {{ props.handled ? 'badge-gray' : 'badge-red' }}">
+              {{ props.handled ? 'HANDLED' : 'UNHANDLED' }}
+            </span>
+            @if (props.code !== undefined)
+              <span class="badge badge-violet">CODE {{ props.code }}</span>
+            @endif
+          </div>
+        </div>
+
+        @if (props.requestUrl)
+          <div class="request-bar">
+            @if (props.httpStatus)
+              <span class="http-status">{{ props.httpStatus }}</span>
+            @endif
+            @if (props.httpMethod)
+              <span class="http-method">{{ props.httpMethod }}</span>
+            @endif
+            <span class="request-url">{{ props.requestUrl }}</span>
+          </div>
+        @endif
+      </div>
+
+      <!-- Stack Trace Section -->
+      <div class="section fade-in">
+        <div class="section-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+          Exception trace
+        </div>
+        <div class="section-content" style="padding: 0;">
+          @foreach (props.stackFrames as frame, index)
+            <div class="stack-frame {{ frame.isApp ? 'app' : 'vendor' }}" data-index="{{ index }}">
+              <div class="stack-frame-header" onclick="toggleFrame({{ index }})">
+                <div class="stack-frame-dot"></div>
+                <div class="stack-frame-info">
+                  <div class="stack-frame-function">
+                    @if (frame.function && frame.function !== '<anonymous>')
+                      @if (frame.method)
+                        <span class="text-violet">{{ frame.function }}</span>.<span class="text-blue">{{ frame.method }}</span>
+                      @else
+                        {{ frame.function }}
+                      @endif
+                    @else
+                      {{ frame.file }}
+                    @endif
+                  </div>
+                  <div class="stack-frame-location">{{ frame.file }}:{{ frame.line }}@if (frame.column):{{ frame.column }}@endif</div>
+                </div>
+                @if (frame.codeSnippet)
+                  <span class="stack-frame-toggle" id="toggle-{{ index }}">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                      <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+                  </span>
+                @endif
+              </div>
+              @if (frame.codeSnippet)
+                <div class="stack-frame-code" id="code-{{ index }}" style="display: {{ index === 0 && frame.isApp ? 'block' : 'none' }};">
+                  <div class="code-snippet">
+                    @foreach (frame.codeSnippet.lines as codeLine)
+                      <div class="code-line {{ codeLine.highlighted ? 'highlighted' : '' }}">
+                        <span class="code-line-number">{{ codeLine.line }}</span>
+                        <span class="code-line-content">{{ codeLine.code }}</span>
+                      </div>
+                    @endforeach
+                  </div>
+                </div>
+              @endif
+            </div>
+          @endforeach
+        </div>
+      </div>
+
+      <!-- Routing Section -->
+      @if (props.routing && (props.routing.controller || props.routing.routeName || props.routing.middleware?.length))
+        <div class="section fade-in">
+          <div class="section-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12h18M3 6h18M3 18h18"/>
+            </svg>
+            Routing
+          </div>
+          <div class="section-content">
+            <table class="context-table">
+              <tbody>
+                @if (props.routing.controller)
+                  <tr>
+                    <th>CONTROLLER</th>
+                    <td>{{ props.routing.controller }}</td>
+                  </tr>
+                @endif
+                @if (props.routing.routeName)
+                  <tr>
+                    <th>ROUTE NAME</th>
+                    <td>{{ props.routing.routeName }}</td>
+                  </tr>
+                @endif
+                @if (props.routing.middleware?.length)
+                  <tr>
+                    <th>MIDDLEWARE</th>
+                    <td>{{ props.routing.middleware.join(', ') }}</td>
+                  </tr>
+                @endif
+              </tbody>
+            </table>
+          </div>
+        </div>
+      @endif
+
+      <!-- Queries Section -->
+      @if (props.queries?.length)
+        <div class="section fade-in">
+          <div class="section-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+            Queries
+            <span style="margin-left: auto; font-size: 0.75rem; color: #6b7280;">{{ props.queries.length }} of {{ props.queries.length }}</span>
+          </div>
+          <div class="section-content" style="padding: 0;">
+            @foreach (props.queries as query)
+              <div class="query-item">
+                <div class="query-meta">
+                  <span class="query-driver">{{ query.connection || 'sql' }}</span>
+                  @if (query.time !== undefined)
+                    <span class="query-time">{{ query.time.toFixed(2) }}ms</span>
+                  @endif
+                </div>
+                <div class="query-sql">{!! query.query !!}</div>
+              </div>
+            @endforeach
+          </div>
+        </div>
+      @endif
+
+      <!-- Matrix Footer -->
+      <div class="matrix-footer">
+        <div class="matrix-columns">
+          @for (let i = 0; i < 20; i++)
+            <div class="matrix-column" style="animation-delay: {{ Math.random() * -20 }}s">
+              @for (let j = 0; j < 200; j++){{ Math.random() > 0.5 ? '1' : '0' }}@if (Math.random() > 0.9)
+@endif@endfor
+            </div>
+          @endfor
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function toggleFrame(index) {
+      const code = document.getElementById('code-' + index);
+      const toggle = document.getElementById('toggle-' + index);
+      if (code) {
+        if (code.style.display === 'none') {
+          code.style.display = 'block';
+          toggle?.classList.add('expanded');
+        } else {
+          code.style.display = 'none';
+          toggle?.classList.remove('expanded');
+        }
+      }
+    }
+
+    function copyAsMarkdown() {
+      const exceptionClass = '{{ props.exceptionClass }}';
+      const message = '{{ props.message }}';
+      const file = '{{ props.file || '' }}';
+      const line = '{{ props.line || '' }}';
+
+      let md = '## ' + exceptionClass + '\n\n';
+      md += '**Message:** ' + message + '\n\n';
+      if (file) {
+        md += '**Location:** `' + file + (line ? ':' + line : '') + '`\n\n';
+      }
+
+      navigator.clipboard.writeText(md).then(() => {
+        alert('Copied to clipboard!');
+      });
+    }
+  </script>
+</body>
+</html>
