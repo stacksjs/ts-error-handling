@@ -8,6 +8,7 @@ const config: PickierConfig = {
     '**/dist/**',
     '**/.git/**',
     'fixtures/**',
+    'CHANGELOG.md',
   ],
 
   lint: {
@@ -26,10 +27,31 @@ const config: PickierConfig = {
 
   rules: {
     noDebugger: 'error',
-    noConsole: 'warn',
+    noConsole: 'off',
   },
 
-  pluginRules: {},
+  pluginRules: {
+    'ts/no-top-level-await': 'off',
+    'style/brace-style': 'off',
+    'style/max-statements-per-line': 'off',
+    'quotes': 'off',
+    'style/quotes': 'off',
+    'pickier/quotes': 'off',
+    'markdown/no-inline-html': 'off',
+    'markdown/code-block-style': 'off',
+    'markdown/blanks-around-fences': 'off',
+    'markdown/blanks-around-lists': 'off',
+    'markdown/no-emphasis-as-heading': 'off',
+    'markdown/no-duplicate-heading': 'off',
+    'markdown/no-trailing-punctuation': 'off',
+    'markdown/link-image-style': 'off',
+    'markdown/link-image-reference-definitions': 'off',
+    'markdown/reference-links-images': 'off',
+    'markdown/single-title': 'off',
+    'markdown/heading-increment': 'off',
+    'markdown/descriptive-link-text': 'off',
+    'no-super-linear-backtracking': 'off',
+  },
 }
 
 export default config

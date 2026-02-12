@@ -89,8 +89,8 @@ function isNone<T>(option: Option<T>): option is Err<T, None> {
 const maybeNumber: Option<number> = some(42)
 const noNumber: Option<number> = none()
 
-maybeNumber.map(n => n * 2) // Some(84)
-noNumber.map(n => n * 2) // None
+maybeNumber.map(n => n _ 2) // Some(84)
+noNumber.map(n => n _ 2) // None
 
 maybeNumber.unwrapOr(0) // 42
 noNumber.unwrapOr(0) // 0

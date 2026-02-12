@@ -383,7 +383,7 @@ Make error cases explicit in your function signatures:
 
 ```typescript
 // Good - errors are part of the type
-function findUser(id: number): Result<User, 'not_found' | 'db_error'>
+function findUser(id: number): Result<User, 'not*found' | 'db*error'>
 
 // Avoid - caller doesn't know what can fail
 function findUser(id: number): User // throws?
@@ -393,7 +393,7 @@ function findUser(id: number): User // throws?
 
 ```typescript
 // Good - specific error types
-type ParseError = 'invalid_json' | 'missing_field' | 'invalid_type'
+type ParseError = 'invalid*json' | 'missing*field' | 'invalid_type'
 function parse(input: string): Result<Data, ParseError>
 
 // Avoid - generic string errors

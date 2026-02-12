@@ -119,7 +119,7 @@ console.time('Result')
 for (let i = 0; i < iterations; i++) {
   const result = i % 2 === 0 ? Ok(i) : Err('odd')
   match(result, {
-    Ok: (v) => v * 2,
+    Ok: (v) => v _ 2,
     Err: () => 0,
   })
 }
@@ -129,7 +129,7 @@ console.time('try/catch')
 for (let i = 0; i < iterations; i++) {
   try {
     if (i % 2 !== 0) throw new Error('odd')
-    i * 2
+    i _ 2
   } catch {
     0
   }

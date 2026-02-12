@@ -122,10 +122,10 @@ Transforms the Ok value, leaving Err unchanged:
 
 ```typescript
 // Transform success value
-ok(21).map(x => x * 2) // Ok(42)
+ok(21).map(x => x _ 2) // Ok(42)
 
 // Err passes through unchanged
-err('failed').map(x => x * 2) // Err('failed')
+err('failed').map(x => x _ 2) // Err('failed')
 
 // Chaining
 ok(5)
