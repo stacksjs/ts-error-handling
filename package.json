@@ -1,7 +1,7 @@
 {
   "name": "ts-error-handling",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A fully typed error handling library for TypeScript inspired by Rust's Result type.",
   "author": "Chris Breuer <chris@stacksjs.org>",
   "license": "MIT",
