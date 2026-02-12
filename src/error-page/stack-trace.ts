@@ -1,6 +1,6 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import type { CodeSnippet, StackFrame } from './types'
+import type { CodeSnippet, ErrorPageData, StackFrame } from './types'
 
 /**
  * Regular expressions for parsing stack traces
@@ -194,7 +194,7 @@ export function createErrorPageDataFromError(
   error: Error,
   basePaths: string[] = [],
   snippetLines: number = 8,
-) {
+): ErrorPageData {
   const frames = parseStackTrace(error.stack, basePaths)
   const enhancedFrames = enhanceStackFrames(frames, snippetLines)
 
