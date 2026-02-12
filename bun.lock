@@ -5,6 +5,7 @@
       "name": "ts-error-handling",
       "devDependencies": {
         "better-dx": "^0.2.5",
+        "pickier": "^0.1.17",
       },
     },
   },
