@@ -1,11 +1,12 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "ts-error-handling",
       "devDependencies": {
         "better-dx": "^0.2.5",
-        "pickier": "^0.1.17",
+        "pickier": "^0.1.18",
       },
     },
   },
@@ -68,7 +69,7 @@
 
     "p-limit": ["p-limit@7.3.0", "", { "dependencies": { "yocto-queue": "^1.2.1" } }, "sha512-7cIXg/Z0M5WZRblrsOla88S4wAK+zOQQWeBYfV3qJuJXMr+LnbYjaadrFaS0JILfEDPVqHyKnZ1Z/1d6J9VVUw=="],
 
-    "pickier": ["pickier@0.1.17", "", { "dependencies": { "@stacksjs/clapp": "^0.2.0", "p-limit": "^7.2.0", "tinyglobby": "^0.2.15" }, "bin": { "pickier": "./dist/bin/cli.js" } }, "sha512-zwxtciPv8XE6sCTFJeOsY3BSNoi6EeJXB+WH7bMNc/2UP2yAcZDq3wZ2k/wyt9dW1PDLa/Dym40YfAr+Oc5/Ww=="],
+    "pickier": ["pickier@0.1.18", "", { "dependencies": { "@stacksjs/clapp": "^0.2.0", "p-limit": "^7.2.0", "tinyglobby": "^0.2.15" }, "bin": { "pickier": "./dist/bin/cli.js" } }, "sha512-F+8IulGVBWsjUacEe8VT7Toy+wQqN7HpT3snO4e1it/rqtcFJM/q0/3i2XELXqOdfvgV0D/k9dvQqAIl9r9vqA=="],
 
     "picomatch": ["picomatch@4.0.3", "", {}, "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q=="],
 
@@ -97,5 +98,7 @@
     "wrap-ansi": ["wrap-ansi@9.0.2", "", { "dependencies": { "ansi-styles": "^6.2.1", "string-width": "^7.0.0", "strip-ansi": "^7.1.0" } }, "sha512-42AtmgqjV+X1VpdOfyTGOYRi0/zsoLqtXQckTmqTeybT+BDIbM/Guxo7x3pE2vtpr1ok6xRqM9OpBe+Jyoqyww=="],
 
     "yocto-queue": ["yocto-queue@1.2.2", "", {}, "sha512-4LCcse/U2MHZ63HAJVE+v71o7yOdIe4cZ70Wpf8D/IyjDKYQLV5GD46B+hSTjJsvV5PztjvHoU580EftxjDZFQ=="],
+
+    "@stacksjs/logsmith/pickier": ["pickier@0.1.17", "", { "dependencies": { "@stacksjs/clapp": "^0.2.0", "p-limit": "^7.2.0", "tinyglobby": "^0.2.15" }, "bin": { "pickier": "./dist/bin/cli.js" } }, "sha512-zwxtciPv8XE6sCTFJeOsY3BSNoi6EeJXB+WH7bMNc/2UP2yAcZDq3wZ2k/wyt9dW1PDLa/Dym40YfAr+Oc5/Ww=="],
   }
 }
