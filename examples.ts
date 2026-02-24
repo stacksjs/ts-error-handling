@@ -277,6 +277,7 @@ function calculateTotal(product: Product, quantity: number): number {
 
 function createOrder(orderData: OrderData): Result<Order, string> {
   return validateQuantity(orderData.quantity)
+    // eslint-disable-next-line no-unused-vars
     .andThen(quantity =>
       findProduct(orderData.productId)
         .andThen(product => checkStock(product, quantity))
@@ -393,6 +394,7 @@ async function makeRequest<T>(url: string) {
 }
 
 // Usage with full type safety
+// eslint-disable-next-line no-unused-vars
 async function getUserProfile(userId: string): Promise<
   { success: true, user: User } | { success: false, error: string }
 > {

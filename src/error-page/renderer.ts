@@ -24,6 +24,7 @@ function formatFrameFunction(frame: StackFrame): string {
   }
 
   if (frame.method) {
+    // eslint-disable-next-line no-unused-vars
     return `<span class="text-violet">${escapeHtml(frame.function)}</span>.<span class="text-blue">${escapeHtml(frame.method)}</span>`
   }
 
@@ -166,7 +167,7 @@ function renderQueries(queries: QueryInfo[]): string {
     return '<div class="empty-state">// NO QUERIES</div>'
   }
 
-  return queries.map((query, index) => `
+  return queries.map((query, _index) => `
     <div class="query-item">
       <div class="query-meta">
         <span class="query-driver">${query.connection ? escapeHtml(query.connection) : 'sql'}</span>
@@ -566,7 +567,9 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
       }
       md += '### Stack Trace\\n\\n';
       md += '\`\`\`\\n';
+      // eslint-disable-next-line no-unused-vars
       data.stackFrames.forEach(function(f) {
+        // eslint-disable-next-line no-unused-vars
         md += (f.function || '<anonymous>') + ' at ' + f.file + (f.line ? ':' + f.line : '') + '\\n';
       });
       md += '\`\`\`\\n';
