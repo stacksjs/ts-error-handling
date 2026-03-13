@@ -2,7 +2,7 @@
 
 ## About
 
-A fully typed error handling library for TypeScript inspired by Rust's Result type.
+A fully typed error handling library for TypeScript inspired by Rust's `Result` type and neverthrow. It provides type-safe `ok`/`err` Result types with automatic type narrowing, railway-oriented programming via `map`, `andThen`, and `orElse` chaining, plus utilities for combining results, traversing arrays, parallel/sequential async operations, and converting between exceptions and Result types. Zero dependencies.
 
 ## Linting
 
