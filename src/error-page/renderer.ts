@@ -25,7 +25,7 @@ function formatFrameFunction(frame: StackFrame): string {
 
   if (frame.method) {
     // eslint-disable-next-line no-unused-vars
-    return `<span class="text-violet">${escapeHtml(frame.function)}</span>.<span class="text-blue">${escapeHtml(frame.method)}</span>`
+    return `<span class='text-violet'>${escapeHtml(frame.function)}</span>.<span class='text-blue'>${escapeHtml(frame.method)}</span>`
   }
 
   return escapeHtml(frame.function)
@@ -56,14 +56,14 @@ function highlightSql(sql: string): string {
   // Highlight keywords (case insensitive)
   for (const keyword of keywords) {
     const regex = new RegExp(`\\b(${keyword})\\b`, 'gi')
-    result = result.replace(regex, '<span class="keyword">$1</span>')
+    result = result.replace(regex, '<span class='keyword'>$1</span>')
   }
 
   // Highlight strings
-  result = result.replace(/'([^']*)'/g, '<span class="string">\'$1\'</span>')
+  result = result.replace(/'([^']*)'/g, '<span class='string'>\'$1\'</span>')
 
   // Highlight numbers
-  result = result.replace(/\b(\d+)\b/g, '<span class="number">$1</span>')
+  result = result.replace(/\b(\d+)\b/g, '<span class='number'>$1</span>')
 
   return result
 }
@@ -77,13 +77,13 @@ function renderCodeSnippet(frame: StackFrame): string {
 
   const lines = frame.codeSnippet.lines.map((line) => {
     const highlightedClass = line.highlighted ? ' highlighted' : ''
-    return `<div class="code-line${highlightedClass}">
-      <span class="code-line-number">${line.line}</span>
-      <span class="code-line-content">${escapeHtml(line.code)}</span>
+    return `<div class='code-line${highlightedClass}'>
+      <span class='code-line-number'>${line.line}</span>
+      <span class='code-line-content'>${escapeHtml(line.code)}</span>
     </div>`
   }).join('')
 
-  return `<div class="code-snippet">${lines}</div>`
+  return `<div class='code-snippet'>${lines}</div>`
 }
 
 /**
@@ -94,20 +94,20 @@ function renderStackFrame(frame: StackFrame, index: number): string {
   const hasSnippet = !!frame.codeSnippet
 
   return `
-    <div class="stack-frame ${frameClass}" data-index="${index}">
-      <div class="stack-frame-header" onclick="toggleFrame(${index})">
-        <div class="stack-frame-dot"></div>
-        <div class="stack-frame-info">
-          <div class="stack-frame-function">${formatFrameFunction(frame)}</div>
-          <div class="stack-frame-location">${formatLocation(frame)}</div>
+    <div class='stack-frame ${frameClass}' data-index='${index}'>
+      <div class='stack-frame-header' onclick='toggleFrame(${index})'>
+        <div class='stack-frame-dot'></div>
+        <div class='stack-frame-info'>
+          <div class='stack-frame-function'>${formatFrameFunction(frame)}</div>
+          <div class='stack-frame-location'>${formatLocation(frame)}</div>
         </div>
-        ${hasSnippet ? `<span class="stack-frame-toggle" id="toggle-${index}">
+        ${hasSnippet ? `<span class='stack-frame-toggle' id='toggle-${index}'>
           <svg width='12' height='12' viewBox='0 0 12 12' fill='currentColor'>
             <path d='M2 4L6 8L10 4' stroke='currentColor' stroke-width='2' fill='none'/>
           </svg>
         </span>` : ''}
       </div>
-      ${hasSnippet ? `<div class="stack-frame-code" id="code-${index}" style="display: none;">
+      ${hasSnippet ? `<div class='stack-frame-code' id='code-${index}' style='display: none;'>
         ${renderCodeSnippet(frame)}
       </div>` : ''}
     </div>
@@ -119,20 +119,20 @@ function renderStackFrame(frame: StackFrame, index: number): string {
  */
 function renderVendorGroup(count: number, frames: StackFrame[], groupIndex: number): string {
   return `
-    <div class="vendor-group" onclick="toggleVendorGroup(${groupIndex})">
-      <span class="vendor-group-icon">
-        <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
-          <rect width="8" height="8" rx="1"/>
+    <div class='vendor-group' onclick='toggleVendorGroup(${groupIndex})'>
+      <span class='vendor-group-icon'>
+        <svg width='8' height='8' viewBox='0 0 8 8' fill='currentColor'>
+          <rect width='8' height='8' rx='1'/>
         </svg>
       </span>
       <span>${count} vendor frame${count > 1 ? 's' : ''}</span>
-      <span class="stack-frame-toggle" id="vendor-toggle-${groupIndex}">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-          <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="2" fill="none"/>
+      <span class='stack-frame-toggle' id='vendor-toggle-${groupIndex}'>
+        <svg width='12' height='12' viewBox='0 0 12 12' fill='currentColor'>
+          <path d='M2 4L6 8L10 4' stroke='currentColor' stroke-width='2' fill='none'/>
         </svg>
       </span>
     </div>
-    <div class="vendor-group-frames" id="vendor-frames-${groupIndex}" style="display: none;">
+    <div class='vendor-group-frames' id='vendor-frames-${groupIndex}' style='display: none;'>
       ${frames.map((f, i) => renderStackFrame(f, groupIndex * 1000 + i)).join('')}
     </div>
   `
@@ -164,16 +164,16 @@ function renderStackTrace(frames: StackFrame[]): string {
  */
 function renderQueries(queries: QueryInfo[]): string {
   if (!queries || queries.length === 0) {
-    return '<div class="empty-state">// NO QUERIES</div>'
+    return '<div class='empty-state'>// NO QUERIES</div>'
   }
 
   return queries.map((query, _index) => `
-    <div class="query-item">
-      <div class="query-meta">
-        <span class="query-driver">${query.connection ? escapeHtml(query.connection) : 'sql'}</span>
-        ${query.time !== undefined ? `<span class="query-time">${query.time.toFixed(2)}ms</span>` : ''}
+    <div class='query-item'>
+      <div class='query-meta'>
+        <span class='query-driver'>${query.connection ? escapeHtml(query.connection) : 'sql'}</span>
+        ${query.time !== undefined ? `<span class='query-time'>${query.time.toFixed(2)}ms</span>` : ''}
       </div>
-      <div class="query-sql">${highlightSql(query.query)}</div>
+      <div class='query-sql'>${highlightSql(query.query)}</div>
     </div>
   `).join('')
 }
@@ -184,11 +184,11 @@ function renderQueries(queries: QueryInfo[]): string {
 function renderContextTable(context: Record<string, unknown>): string {
   const entries = Object.entries(context)
   if (entries.length === 0) {
-    return '<div class="empty-state">// NO DATA</div>'
+    return '<div class='empty-state'>// NO DATA</div>'
   }
 
   return `
-    <table class="context-table">
+    <table class='context-table'>
       <tbody>
         ${entries.map(([key, value]) => `
           <tr>
@@ -212,16 +212,16 @@ function renderUserSection(user?: UserContext): string {
   if (!hasData) return ''
 
   return `
-    <div class="section fade-in">
-      <div class="section-header">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
+    <div class='section fade-in'>
+      <div class='section-header'>
+        <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+          <path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/>
+          <circle cx='12' cy='7' r='4'/>
         </svg>
         User
       </div>
-      <div class="section-content">
-        <table class="context-table">
+      <div class='section-content'>
+        <table class='context-table'>
           <tbody>
             ${user.id ? `<tr><th>ID</th><td>${escapeHtml(String(user.id))}</td></tr>` : ''}
             ${user.email ? `<tr><th>Email</th><td>${escapeHtml(user.email)}</td></tr>` : ''}
@@ -245,23 +245,23 @@ function renderJobSection(job?: JobContext): string {
   if (!hasData) return ''
 
   return `
-    <div class="section fade-in">
-      <div class="section-header">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+    <div class='section fade-in'>
+      <div class='section-header'>
+        <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+          <rect x='2' y='7' width='20' height='14' rx='2' ry='2'/>
+          <path d='M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16'/>
         </svg>
         Queue Job
       </div>
-      <div class="section-content">
-        <table class="context-table">
+      <div class='section-content'>
+        <table class='context-table'>
           <tbody>
             ${job.name ? `<tr><th>Job</th><td>${escapeHtml(job.name)}</td></tr>` : ''}
             ${job.queue ? `<tr><th>Queue</th><td>${escapeHtml(job.queue)}</td></tr>` : ''}
             ${job.uuid ? `<tr><th>UUID</th><td><code>${escapeHtml(job.uuid)}</code></td></tr>` : ''}
             ${job.attempt !== undefined ? `<tr><th>Attempt</th><td>${job.attempt}${job.maxAttempts ? ` / ${job.maxAttempts}` : ''}</td></tr>` : ''}
             ${job.timeout ? `<tr><th>Timeout</th><td>${job.timeout}s</td></tr>` : ''}
-            ${job.payload ? `<tr><th>Payload</th><td><pre style="margin: 0; font-size: 0.875rem; white-space: pre-wrap;">${escapeHtml(JSON.stringify(job.payload, null, 2))}</pre></td></tr>` : ''}
+            ${job.payload ? `<tr><th>Payload</th><td><pre style='margin: 0; font-size: 0.875rem; white-space: pre-wrap;'>${escapeHtml(JSON.stringify(job.payload, null, 2))}</pre></td></tr>` : ''}
           </tbody>
         </table>
       </div>
@@ -284,10 +284,10 @@ function renderMatrixFooter(): string {
   }
 
   const columns = Array.from({ length: 20 }, () =>
-    `<div class="matrix-column" style="animation-delay: ${Math.random() * -20}s">${generateColumn()}</div>`,
+    `<div class='matrix-column' style='animation-delay: ${Math.random() * -20}s'>${generateColumn()}</div>`,
   ).join('')
 
-  return `<div class="matrix-footer"><div class="matrix-columns">${columns}</div></div>`
+  return `<div class='matrix-footer'><div class='matrix-columns'>${columns}</div></div>`
 }
 
 /**
@@ -312,27 +312,27 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
   // Build badges
   const badges: string[] = []
   if (data.environment?.framework) {
-    badges.push(`<span class="badge badge-gray">${escapeHtml(data.environment.framework)} ${data.environment.frameworkVersion || ''}</span>`)
+    badges.push(`<span class='badge badge-gray'>${escapeHtml(data.environment.framework)} ${data.environment.frameworkVersion || ''}</span>`)
   }
   if (data.environment?.nodeVersion) {
-    badges.push(`<span class="badge badge-gray">Node ${escapeHtml(data.environment.nodeVersion)}</span>`)
+    badges.push(`<span class='badge badge-gray'>Node ${escapeHtml(data.environment.nodeVersion)}</span>`)
   }
   if (data.environment?.bunVersion) {
-    badges.push(`<span class="badge badge-gray">Bun ${escapeHtml(data.environment.bunVersion)}</span>`)
+    badges.push(`<span class='badge badge-gray'>Bun ${escapeHtml(data.environment.bunVersion)}</span>`)
   }
-  badges.push(`<span class="badge ${data.handled ? 'badge-gray' : 'badge-red'}">${data.handled ? 'HANDLED' : 'UNHANDLED'}</span>`)
+  badges.push(`<span class='badge ${data.handled ? 'badge-gray' : 'badge-red'}'>${data.handled ? 'HANDLED' : 'UNHANDLED'}</span>`)
   if (data.code !== undefined) {
-    badges.push(`<span class="badge badge-violet">CODE ${escapeHtml(String(data.code))}</span>`)
+    badges.push(`<span class='badge badge-violet'>CODE ${escapeHtml(String(data.code))}</span>`)
   }
 
   // Build request bar
   let requestBar = ''
   if (showRequest && data.request?.url) {
     requestBar = `
-      <div class="request-bar">
-        ${data.httpStatus ? `<span class="http-status">${data.httpStatus}</span>` : ''}
-        ${data.request.method ? `<span class="http-method">${escapeHtml(data.request.method)}</span>` : ''}
-        <span class="request-url">${escapeHtml(data.request.url)}</span>
+      <div class='request-bar'>
+        ${data.httpStatus ? `<span class='http-status'>${data.httpStatus}</span>` : ''}
+        ${data.request.method ? `<span class='http-method'>${escapeHtml(data.request.method)}</span>` : ''}
+        <span class='request-url'>${escapeHtml(data.request.url)}</span>
       </div>
     `
   }
@@ -341,15 +341,15 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
   let routingSection = ''
   if (data.routing && (data.routing.controller || data.routing.routeName || data.routing.middleware?.length)) {
     routingSection = `
-      <div class="section fade-in">
-        <div class="section-header">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 12h18M3 6h18M3 18h18"/>
+      <div class='section fade-in'>
+        <div class='section-header'>
+          <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+            <path d='M3 12h18M3 6h18M3 18h18'/>
           </svg>
           Routing
         </div>
-        <div class="section-content">
-          <table class="context-table">
+        <div class='section-content'>
+          <table class='context-table'>
             <tbody>
               ${data.routing.controller ? `<tr><th>CONTROLLER</th><td>${escapeHtml(data.routing.controller)}</td></tr>` : ''}
               ${data.routing.routeName ? `<tr><th>ROUTE NAME</th><td>${escapeHtml(data.routing.routeName)}</td></tr>` : ''}
@@ -378,15 +378,15 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
 
     if (Object.keys(envContext).length > 0) {
       envSection = `
-        <div class="section fade-in">
-          <div class="section-header">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M12 16v-4M12 8h.01"/>
+        <div class='section fade-in'>
+          <div class='section-header'>
+            <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+              <circle cx='12' cy='12' r='10'/>
+              <path d='M12 16v-4M12 8h.01'/>
             </svg>
             Environment
           </div>
-          <div class="section-content">
+          <div class='section-content'>
             ${renderContextTable(envContext)}
           </div>
         </div>
@@ -398,17 +398,17 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
   let queriesSection = ''
   if (showQueries && data.queries) {
     queriesSection = `
-      <div class="section fade-in">
-        <div class="section-header">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <ellipse cx="12" cy="5" rx="9" ry="3"/>
-            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
-            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+      <div class='section fade-in'>
+        <div class='section-header'>
+          <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+            <ellipse cx='12' cy='5' rx='9' ry='3'/>
+            <path d='M21 12c0 1.66-4 3-9 3s-9-1.34-9-3'/>
+            <path d='M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5'/>
           </svg>
           Queries
-          <span style="margin-left: auto; font-size: 0.75rem; color: #6b7280;">${data.queries.length} of ${data.queries.length}</span>
+          <span style='margin-left: auto; font-size: 0.75rem; color: #6b7280;'>${data.queries.length} of ${data.queries.length}</span>
         </div>
-        <div class="section-content" style="padding: 0;">
+        <div class='section-content' style='padding: 0;'>
           ${renderQueries(data.queries)}
         </div>
       </div>
@@ -423,23 +423,23 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
 
     if (hasHeaders || hasBody) {
       requestDetailsSection = `
-        <div class="section fade-in">
-          <div class="section-header">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <path d="M3 9h18M9 21V9"/>
+        <div class='section fade-in'>
+          <div class='section-header'>
+            <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+              <rect x='3' y='3' width='18' height='18' rx='2'/>
+              <path d='M3 9h18M9 21V9'/>
             </svg>
             Request
           </div>
-          <div class="section-content">
+          <div class='section-content'>
             ${hasHeaders ? `
               <h4 style='font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.5rem; text-transform: uppercase;'>Headers</h4>
               ${renderContextTable(data.request.headers!)}
             ` : ''}
             ${hasBody ? `
-              <h4 style="font-size: 0.75rem; font-weight: 600; color: #6b7280; margin: 1rem 0 0.5rem; text-transform: uppercase;">Body</h4>
-              <pre style="font-family: monospace; font-size: 0.875rem; white-space: pre-wrap;">${escapeHtml(typeof data.request.body === 'object' ? JSON.stringify(data.request.body, null, 2) : String(data.request.body))}</pre>
-            ` : `<div class="empty-state">// NO REQUEST BODY</div>`}
+              <h4 style='font-size: 0.75rem; font-weight: 600; color: #6b7280; margin: 1rem 0 0.5rem; text-transform: uppercase;'>Body</h4>
+              <pre style='font-family: monospace; font-size: 0.875rem; white-space: pre-wrap;'>${escapeHtml(typeof data.request.body === 'object' ? JSON.stringify(data.request.body, null, 2) : String(data.request.body))}</pre>
+            ` : `<div class='empty-state'>// NO REQUEST BODY</div>`}
           </div>
         </div>
       `
@@ -447,30 +447,30 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
   }
 
   return `<!DOCTYPE html>
-<html lang="en" class="${theme}">
+<html lang="en" class='${theme}'>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
   <title>${escapeHtml(data.exceptionClass)} - ${escapeHtml(appName)}</title>
   <style>${ERROR_PAGE_CSS}${customCss}</style>
 </head>
-<body class="${theme}">
-  <header class="error-header">
-    <div class="error-header-left">
-      <span class="error-header-status">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-          <circle cx="6" cy="6" r="5"/>
+<body class='${theme}'>
+  <header class='error-header'>
+    <div class='error-header-left'>
+      <span class='error-header-status'>
+        <svg width='12' height='12' viewBox='0 0 12 12' fill='currentColor'>
+          <circle cx='6' cy='6' r='5'/>
         </svg>
         ${escapeHtml(statusTitle)}
       </span>
-      <span class="error-header-type">${escapeHtml(data.exceptionClass)}</span>
+      <span class='error-header-type'>${escapeHtml(data.exceptionClass)}</span>
     </div>
-    <div class="error-header-actions">
+    <div class='error-header-actions'>
       ${enableCopyMarkdown ? `
-        <button class="btn" onclick="copyAsMarkdown()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        <button class='btn' onclick='copyAsMarkdown()'>
+          <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+            <rect x='9' y='9' width='13' height='13' rx='2' ry='2'></rect>
+            <path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'></path>
           </svg>
           Copy as Markdown
         </button>
@@ -478,30 +478,30 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
     </div>
   </header>
 
-  <main class="error-main">
-    <div class="error-page-container">
+  <main class='error-main'>
+    <div class='error-page-container'>
       <!-- Error Card -->
-      <div class="error-card fade-in">
-        <div class="error-card-header">
-          <h1 class="error-class">${escapeHtml(data.exceptionClass)}</h1>
-          ${data.file ? `<div class="error-file">${escapeHtml(data.file)}${data.line ? `:${data.line}` : ''}</div>` : ''}
-          <p class="error-message">${escapeHtml(data.message)}</p>
-          <div class="badges">${badges.join('')}</div>
+      <div class='error-card fade-in'>
+        <div class='error-card-header'>
+          <h1 class='error-class'>${escapeHtml(data.exceptionClass)}</h1>
+          ${data.file ? `<div class='error-file'>${escapeHtml(data.file)}${data.line ? `:${data.line}` : ''}</div>` : ''}
+          <p class='error-message'>${escapeHtml(data.message)}</p>
+          <div class='badges'>${badges.join('')}</div>
         </div>
         ${requestBar}
       </div>
 
       <!-- Stack Trace -->
-      <div class="section fade-in">
-        <div class="section-header">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-            <path d="M2 17l10 5 10-5"/>
-            <path d="M2 12l10 5 10-5"/>
+      <div class='section fade-in'>
+        <div class='section-header'>
+          <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+            <path d='M12 2L2 7l10 5 10-5-10-5z'/>
+            <path d='M2 17l10 5 10-5'/>
+            <path d='M2 12l10 5 10-5'/>
           </svg>
           Exception trace
         </div>
-        <div class="section-content" style="padding: 0;">
+        <div class='section-content' style='padding: 0;'>
           ${renderStackTrace(data.stackFrames)}
         </div>
       </div>
@@ -607,7 +607,7 @@ export function renderProductionErrorPage(status: number, customMessage?: string
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
   <title>${status} - ${escapeHtml(error.title)}</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -657,13 +657,13 @@ export function renderProductionErrorPage(status: number, customMessage?: string
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="status">${status}</div>
-    <h1 class="title">${escapeHtml(error.title)}</h1>
-    <p class="message">${escapeHtml(customMessage || error.message)}</p>
-    <a href="javascript:history.back()" class="back">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
+  <div class='container'>
+    <div class='status'>${status}</div>
+    <h1 class='title'>${escapeHtml(error.title)}</h1>
+    <p class='message'>${escapeHtml(customMessage || error.message)}</p>
+    <a href='javascript:history.back()' class='back'>
+      <svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+        <path d='M19 12H5M12 19l-7-7 7-7'/>
       </svg>
       Go Back
     </a>
