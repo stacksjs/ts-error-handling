@@ -526,7 +526,8 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
         if (code.style.display === 'none') {
           code.style.display = 'block';
           toggle?.classList.add('expanded');
-        } else {
+        }
+else {
           code.style.display = 'none';
           toggle?.classList.remove('expanded');
         }
@@ -540,7 +541,8 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
         if (frames.style.display === 'none') {
           frames.style.display = 'block';
           toggle?.classList.add('expanded');
-        } else {
+        }
+else {
           frames.style.display = 'none';
           toggle?.classList.remove('expanded');
         }
