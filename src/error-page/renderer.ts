@@ -102,8 +102,8 @@ function renderStackFrame(frame: StackFrame, index: number): string {
           <div class="stack-frame-location">${formatLocation(frame)}</div>
         </div>
         ${hasSnippet ? `<span class="stack-frame-toggle" id="toggle-${index}">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="2" fill="none"/>
+          <svg width='12' height='12' viewBox='0 0 12 12' fill='currentColor'>
+            <path d='M2 4L6 8L10 4' stroke='currentColor' stroke-width='2' fill='none'/>
           </svg>
         </span>` : ''}
       </div>
@@ -433,7 +433,7 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
           </div>
           <div class="section-content">
             ${hasHeaders ? `
-              <h4 style="font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.5rem; text-transform: uppercase;">Headers</h4>
+              <h4 style='font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.5rem; text-transform: uppercase;'>Headers</h4>
               ${renderContextTable(data.request.headers!)}
             ` : ''}
             ${hasBody ? `
@@ -520,8 +520,8 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
 
   <script>
     function toggleFrame(index) {
-      const code = document.getElementById('code-' + index);
-      const toggle = document.getElementById('toggle-' + index);
+      const code = document.getElementById(\`code-\${index}\`);
+      const toggle = document.getElementById(\`toggle-\${index}\`);
       if (code) {
         if (code.style.display === 'none') {
           code.style.display = 'block';
@@ -535,8 +535,8 @@ else {
     }
 
     function toggleVendorGroup(index) {
-      const frames = document.getElementById('vendor-frames-' + index);
-      const toggle = document.getElementById('vendor-toggle-' + index);
+      const frames = document.getElementById(\`vendor-frames-\${index}\`);
+      const toggle = document.getElementById(\`vendor-toggle-\${index}\`);
       if (frames) {
         if (frames.style.display === 'none') {
           frames.style.display = 'block';
@@ -562,17 +562,17 @@ else {
         })),
       })};
 
-      let md = '## ' + data.exceptionClass + '\\n\\n';
-      md += '**Message:** ' + data.message + '\\n\\n';
+      let md = \`## \${data.exceptionClass}\\n\\n\`;
+      md += \`**Message:** \${data.message}\\n\\n\`;
       if (data.file) {
-        md += '**Location:** \`' + data.file + (data.line ? ':' + data.line : '') + '\`\\n\\n';
+        md += \`**Location:** \\\`\${data.file}\${data.line ? \`:\${data.line}\` : ''}\\\`\\n\\n\`;
       }
       md += '### Stack Trace\\n\\n';
       md += '\`\`\`\\n';
       // eslint-disable-next-line no-unused-vars
       data.stackFrames.forEach(function(f) {
         // eslint-disable-next-line no-unused-vars
-        md += (f.function || '<anonymous>') + ' at ' + f.file + (f.line ? ':' + f.line : '') + '\\n';
+        md += \`\${f.function || '<anonymous>'} at \${f.file}\${f.line ? \`:\${f.line}\` : ''}\\n\`;
       });
       md += '\`\`\`\\n';
 
