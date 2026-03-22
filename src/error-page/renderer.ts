@@ -56,14 +56,14 @@ function highlightSql(sql: string): string {
   // Highlight keywords (case insensitive)
   for (const keyword of keywords) {
     const regex = new RegExp(`\\b(${keyword})\\b`, 'gi')
-    result = result.replace(regex, '<span class='keyword'>$1</span>')
+    result = result.replace(regex, `<span class='keyword'>$1</span>`)
   }
 
   // Highlight strings
-  result = result.replace(/'([^']*)'/g, '<span class='string'>\'$1\'</span>')
+  result = result.replace(/'([^']*)'/g, `<span class='string'>'$1'</span>`)
 
   // Highlight numbers
-  result = result.replace(/\b(\d+)\b/g, '<span class='number'>$1</span>')
+  result = result.replace(/\b(\d+)\b/g, `<span class='number'>$1</span>`)
 
   return result
 }
@@ -164,7 +164,7 @@ function renderStackTrace(frames: StackFrame[]): string {
  */
 function renderQueries(queries: QueryInfo[]): string {
   if (!queries || queries.length === 0) {
-    return '<div class='empty-state'>// NO QUERIES</div>'
+    return `<div class='empty-state'>// NO QUERIES</div>`
   }
 
   return queries.map((query, _index) => `
@@ -184,7 +184,7 @@ function renderQueries(queries: QueryInfo[]): string {
 function renderContextTable(context: Record<string, unknown>): string {
   const entries = Object.entries(context)
   if (entries.length === 0) {
-    return '<div class='empty-state'>// NO DATA</div>'
+    return `<div class='empty-state'>// NO DATA</div>`
   }
 
   return `
