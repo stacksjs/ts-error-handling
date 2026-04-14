@@ -94,7 +94,7 @@ function renderStackFrame(frame: StackFrame, index: number): string {
   const hasSnippet = !!frame.codeSnippet
 
   return `
-    <div class='stack-frame ${frameClass}' data-index='${index}'>
+    <div class='${frameClass} stack-frame' data-index='${index}'>
       <div class='stack-frame-header' onclick='toggleFrame(${index})'>
         <div class='stack-frame-dot'></div>
         <div class='stack-frame-info'>
@@ -212,7 +212,7 @@ function renderUserSection(user?: UserContext): string {
   if (!hasData) return ''
 
   return `
-    <div class='section fade-in'>
+    <div class='fade-in section'>
       <div class='section-header'>
         <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
           <path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/>
@@ -245,7 +245,7 @@ function renderJobSection(job?: JobContext): string {
   if (!hasData) return ''
 
   return `
-    <div class='section fade-in'>
+    <div class='fade-in section'>
       <div class='section-header'>
         <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
           <rect x='2' y='7' width='20' height='14' rx='2' ry='2'/>
@@ -320,7 +320,7 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
   if (data.environment?.bunVersion) {
     badges.push(`<span class='badge badge-gray'>Bun ${escapeHtml(data.environment.bunVersion)}</span>`)
   }
-  badges.push(`<span class='badge ${data.handled ? 'badge-gray' : 'badge-red'}'>${data.handled ? 'HANDLED' : 'UNHANDLED'}</span>`)
+  badges.push(`<span class='? ${data.handled badge'badge-gray' : 'badge-red'}'>${data.handled ? 'HANDLED' : 'UNHANDLED'}</span>`)
   if (data.code !== undefined) {
     badges.push(`<span class='badge badge-violet'>CODE ${escapeHtml(String(data.code))}</span>`)
   }
@@ -341,7 +341,7 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
   let routingSection = ''
   if (data.routing && (data.routing.controller || data.routing.routeName || data.routing.middleware?.length)) {
     routingSection = `
-      <div class='section fade-in'>
+      <div class='fade-in section'>
         <div class='section-header'>
           <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
             <path d='M3 12h18M3 6h18M3 18h18'/>
@@ -378,7 +378,7 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
 
     if (Object.keys(envContext).length > 0) {
       envSection = `
-        <div class='section fade-in'>
+        <div class='fade-in section'>
           <div class='section-header'>
             <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
               <circle cx='12' cy='12' r='10'/>
@@ -398,7 +398,7 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
   let queriesSection = ''
   if (showQueries && data.queries) {
     queriesSection = `
-      <div class='section fade-in'>
+      <div class='fade-in section'>
         <div class='section-header'>
           <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
             <ellipse cx='12' cy='5' rx='9' ry='3'/>
@@ -423,7 +423,7 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
 
     if (hasHeaders || hasBody) {
       requestDetailsSection = `
-        <div class='section fade-in'>
+        <div class='fade-in section'>
           <div class='section-header'>
             <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
               <rect x='3' y='3' width='18' height='18' rx='2'/>
@@ -492,7 +492,7 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
       </div>
 
       <!-- Stack Trace -->
-      <div class='section fade-in'>
+      <div class='fade-in section'>
         <div class='section-header'>
           <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
             <path d='M12 2L2 7l10 5 10-5-10-5z'/>
