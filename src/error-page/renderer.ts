@@ -320,7 +320,7 @@ export function renderErrorPage(data: ErrorPageData, config: ErrorPageConfig = {
   if (data.environment?.bunVersion) {
     badges.push(`<span class='badge badge-gray'>Bun ${escapeHtml(data.environment.bunVersion)}</span>`)
   }
-  badges.push(`<span class='? ${data.handled badge'badge-gray' : 'badge-red'}'>${data.handled ? 'HANDLED' : 'UNHANDLED'}</span>`)
+  badges.push(`<span class='badge ${data.handled ? 'badge-gray' : 'badge-red'}'>${data.handled ? 'HANDLED' : 'UNHANDLED'}</span>`)
   if (data.code !== undefined) {
     badges.push(`<span class='badge badge-violet'>CODE ${escapeHtml(String(data.code))}</span>`)
   }
