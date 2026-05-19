@@ -59,7 +59,7 @@
     "typecheck": "bun --bun tsc --noEmit"
   },
   "devDependencies": {
-    "better-dx": "^0.2.5",
+    "better-dx": "^0.2.15",
     "pickier": "^0.1.18"
   },
   "git-hooks": {
