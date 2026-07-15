@@ -1,3 +1,14 @@
+[Compare changes](https://github.com/stacksjs/ts-error-handling/compare/v0.1.2...v0.1.3)
+
+## 🧹 Chores
+
+- release v0.1.3 ([e79bdec](https://github.com/stacksjs/ts-error-handling/commit/e79bdec)) _(by Chris <chrisbreuer93@gmail.com>)_
+- add release:patch script ([dd05768](https://github.com/stacksjs/ts-error-handling/commit/dd05768)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/ts-error-handling/compare/v0.1.1...v0.1.2)
 
 ## 🐛 Bug Fixes
