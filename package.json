@@ -61,8 +61,8 @@
     "release:patch": "bunx --bun bumpx patch --recursive --commit --tag --push --yes"
   },
   "devDependencies": {
-    "better-dx": "^0.2.15",
-    "pickier": "^0.1.18"
+    "better-dx": "^0.2.20",
+    "pickier": "^0.1.40"
   },
   "git-hooks": {
     "pre-commit": {
