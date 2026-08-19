@@ -1,11 +1,9 @@
-import type { BunpressConfig } from 'bunpress'
+import type { BunPressConfig } from '@stacksjs/bunpress'
 
-const config: BunpressConfig = {
-  name: 'ts-error-handling',
+const config: BunPressConfig = {
+  title: 'ts-error-handling',
   description: 'Type-safe error handling inspired by Rust Result type',
   url: 'https://ts-error-handling.stacksjs.org',
-  theme: 'docs',
-
   nav: [
     { text: 'Guide', link: '/guide/getting-started' },
     { text: 'API', link: '/guide/result' },
@@ -48,9 +46,11 @@ const config: BunpressConfig = {
     },
   ],
 
-  socialLinks: [
-    { icon: 'github', link: 'https://github.com/stacksjs/ts-error-handling' },
-  ],
+  themeConfig: {
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/stacksjs/ts-error-handling' },
+    ],
+  },
 }
 
 export default config
