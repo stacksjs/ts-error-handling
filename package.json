@@ -61,9 +61,9 @@
     "release:patch": "bunx --bun bumpx patch --recursive --commit --tag --push --yes"
   },
   "devDependencies": {
-    "@stacksjs/bunpress": "^0.2.11",
-    "better-dx": "^0.2.15",
-    "pickier": "^0.1.18"
+    "@stacksjs/bunpress": "^0.2.14",
+    "better-dx": "^0.2.25",
+    "pickier": "^0.1.65"
   },
   "git-hooks": {
     "pre-commit": {
