@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "packages": {
+    "bun.sh@1.4.4": {
+      "name": "bun.sh",
+      "version": "1.4.4",
+      "resolved": "registry:bun.sh@1.4.4"
+    }
+  }
+}

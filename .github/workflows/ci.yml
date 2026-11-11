@@ -83,6 +83,12 @@ jobs:
       - name: Unit Test
         run: bun test
 
+      - name: Build actual package artifacts
+        run: bun run build
+
+      - name: Verify strict installed Result package
+        run: bun run test:package
+
   publish-commit:
     needs: [lint, typecheck, test]
     runs-on: ubuntu-latest

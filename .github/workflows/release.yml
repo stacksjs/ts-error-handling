@@ -20,13 +20,27 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Pantry
-        uses: home-lang/pantry/packages/action@main
+        uses: pantry-pm/pantry/packages/action@27848deafe626b280ed329bf98eff2f01631a764
+        with:
+          version: 0.11.196
+          install: false
 
       - name: Install Dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
+
+      - name: Build actual package artifacts
+        run: bun run build
+
+      - name: Verify strict installed Result package
+        run: bun run test:package
+
+      - name: Publish verified payload to Pantry
+        run: pantry publish --verify-existing
+        env:
+          PANTRY_REGISTRY_TOKEN: ${{ secrets.PANTRY_TOKEN }}
 
       - name: Publish
-        run: pantry publish --npm --access public
+        run: pantry publish --npm --access public --ignore-scripts
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 

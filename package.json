@@ -44,8 +44,9 @@
   "scripts": {
     "build": "bun --bun build.ts",
     "fresh": "bunx rimraf node_modules/ bun.lock && bun i",
-    "prepublishOnly": "bun --bun run build",
+    "prepublishOnly": "bun run build && bun run test:package",
     "test": "bun test",
+    "test:package": "bun test ./test/package.acceptance.ts",
     "lint": "bunx --bun pickier .",
     "lint:fix": "bunx --bun pickier . --fix",
     "format": "bunx --bun pickier . --format",
@@ -61,9 +62,9 @@
     "release:patch": "bunx --bun @stacksjs/bumpx patch --recursive --commit --tag --push --yes"
   },
   "devDependencies": {
+    "@dtsx/bun": "0.11.45",
     "@stacksjs/bunpress": "^0.2.11",
-    "better-dx": "^0.2.15",
-    "pickier": "^0.1.18"
+    "better-dx": "^0.2.15"
   },
   "git-hooks": {
     "pre-commit": {
