@@ -1,3 +1,26 @@
+[Compare changes](https://github.com/stacksjs/ts-error-handling/compare/v0.1.3...v0.1.4)
+
+## 🐛 Bug Fixes
+
+- preserve installed Result discriminants ([995cd54](https://github.com/stacksjs/ts-error-handling/commit/995cd54)) _(by Chris <chris@stacksjs.com>)_
+- **ci**: setup-php 2.37.1, which closes the open advisory ([4784f9a](https://github.com/stacksjs/ts-error-handling/commit/4784f9a)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **docs**: use the config keys bunpress actually has ([6af30e4](https://github.com/stacksjs/ts-error-handling/commit/6af30e4)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 📚 Documentation
+
+- link the community as stacksjs.com/discord ([e625834](https://github.com/stacksjs/ts-error-handling/commit/e625834)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🧹 Chores
+
+- release v0.1.4 ([2eb6588](https://github.com/stacksjs/ts-error-handling/commit/2eb6588)) _(by Chris <chris@stacksjs.com>)_
+- run @stacksjs/logsmith, not the unrelated npm 'logsmith' ([0c75351](https://github.com/stacksjs/ts-error-handling/commit/0c75351)) _(by Chris <chrisbreuer93@gmail.com>)_
+- release through @stacksjs/bumpx, not the unrelated npm 'bumpx' ([0562f1e](https://github.com/stacksjs/ts-error-handling/commit/0562f1e)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: declare bun ^1.3.14 in deps.yaml ([2a99607](https://github.com/stacksjs/ts-error-handling/commit/2a99607)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chris@stacksjs.com>_
+
 [Compare changes](https://github.com/stacksjs/ts-error-handling/compare/v0.1.2...v0.1.3)
 
 ## 🧹 Chores
