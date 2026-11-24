@@ -37,7 +37,7 @@ jobs:
       - name: Publish verified payload to Pantry
         run: pantry publish --verify-existing
         env:
-          PANTRY_REGISTRY_TOKEN: ${{ secrets.PANTRY_TOKEN }}
+          PANTRY_TOKEN: ${{ secrets.PANTRY_TOKEN }}
 
       - name: Publish
         run: pantry publish --npm --access public --ignore-scripts
